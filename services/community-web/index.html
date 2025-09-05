@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pleb.One Community Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8fafc;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Grid Layouts */
+        .grid {
+            display: grid;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+        .grid-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        
+        /* Cards */
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .card h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.3rem;
+        }
+        
+        .card p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        /* Status Indicators */
+        .status {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .status-healthy {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-active {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status::before {
+            content: '●';
+            margin-right: 0.5rem;
+        }
+        
+        /* Metrics */
+        .metric {
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Features */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-list li::before {
+            content: '✓';
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        /* Progress Bars */
+        .progress-bar {
+            background: #e5e7eb;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+        
+        /* Tutorials */
+        .tutorial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .tutorial-card {
+            border-left: 4px solid #667eea;
+        }
+        
+        .difficulty {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .difficulty-beginner { background: #dcfce7; color: #166534; }
+        .difficulty-intermediate { background: #fef3c7; color: #92400e; }
+        .difficulty-advanced { background: #fecaca; color: #991b1b; }
+        
+        /* Code Examples */
+        .code-example {
+            background: #1a1a1a;
+            color: #e5e5e5;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+        }
+        
+        /* Proposals */
+        .proposal {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .proposal-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .proposal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .proposal-meta {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .vote-bar {
+            display: flex;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .vote-for { background: #10b981; }
+        .vote-against { background: #ef4444; }
+        .vote-abstain { background: #6b7280; }
+        
+        .vote-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .vote-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        
+        .vote-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .vote-for-btn { background: #10b981; color: white; }
+        .vote-against-btn { background: #ef4444; color: white; }
+        .vote-abstain-btn { background: #6b7280; color: white; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">🚀 Pleb.One</div>
+            <ul class="nav-links">
+                <li><a href="#" onclick="showPage('home')" class="active">Home</a></li>
+                <li><a href="#" onclick="showPage('dashboard')">Dashboard</a></li>
+                <li><a href="#" onclick="showPage('education')">Education</a></li>
+                <li><a href="#" onclick="showPage('community')">Community</a></li>
+                <li><a href="#" onclick="showPage('identity')">Identity</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <div class="hero">
+                <h1>Community-Owned Nostr Infrastructure</h1>
+                <p>
+                    Join the revolution of decentralized social media with democratic governance, 
+                    educational resources, and transparent community ownership.
+                </p>
+                <a href="#" onclick="showPage('dashboard')" class="cta-button">View Live Dashboard</a>
+            </div>
+
+            <div class="grid grid-4">
+                <div class="card metric">
+                    <div class="metric-value" id="home-connections">4</div>
+                    <div class="metric-label">Active Connections</div>
+                </div>
+                <div class="card metric">
+                    <div class="metric-value" id="home-events">1,542</div>
+                    <div class="metric-label">Events Processed</div>
+                </div>
+                <div class="card metric">
+                    <div class="metric-value">99.9%</div>
+                    <div class="metric-label">Uptime</div>
+                </div>
+                <div class="card metric">
+                    <div class="metric-value">24/7</div>
+                    <div class="metric-label">Availability</div>
+                </div>
+            </div>
+
+            <div class="grid grid-3">
+                <div class="card">
+                    <h3>🏛️ Democratic Governance</h3>
+                    <p>Community-owned decision making through transparent councils and proposals.</p>
+                    <span class="status status-active">16 Active Proposals</span>
+                </div>
+                <div class="card">
+                    <h3>📚 Educational Hub</h3>
+                    <p>Comprehensive learning platform for Nostr development and self-hosting.</p>
+                    <span class="status status-healthy">50+ Tutorials</span>
+                </div>
+                <div class="card">
+                    <h3>🔐 Identity Management</h3>
+                    <p>Secure Nostr key management with multiple verification methods.</p>
+                    <span class="status status-healthy">NIP-05 Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page">
+            <h2 style="margin-bottom: 2rem;">📊 Real-time Dashboard</h2>
+            
+            <div class="grid grid-2">
+                <div class="card">
+                    <h3>Relay Status</h3>
+                    <span class="status status-healthy">Healthy</span>
+                    <div class="grid grid-2" style="margin-top: 1rem;">
+                        <div class="metric">
+                            <div class="metric-value" id="dash-connections">4</div>
+                            <div class="metric-label">Active Connections</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">1h 0m</div>
+                            <div class="metric-label">Uptime</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>Performance</h3>
+                    <div class="metric">
+                        <div class="metric-value">23.5ms</div>
+                        <div class="metric-label">Avg Processing Time</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 15%;"></div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: #666;">Excellent performance</p>
+                </div>
+            </div>
+
+            <div class="grid grid-3">
+                <div class="card">
+                    <h3>Events</h3>
+                    <div class="metric-value" id="dash-events">1,542</div>
+                    <div class="metric-label">Total Processed</div>
+                    <ul class="feature-list" style="margin-top: 1rem;">
+                        <li>1,538 Successfully Stored</li>
+                        <li>4 Rejected (validation)</li>
+                        <li>0 Database Errors</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3>Queries</h3>
+                    <div class="metric-value">892</div>
+                    <div class="metric-label">Total Received</div>
+                    <p style="margin-top: 1rem; color: #666;">15.2ms average query time</p>
+                </div>
+                
+                <div class="card">
+                    <h3>Subscriptions</h3>
+                    <div class="metric-value">18</div>
+                    <div class="metric-label">Currently Active</div>
+                    <p style="margin-top: 1rem; color: #666;">Real-time event streaming</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Education Page -->
+        <div id="education" class="page">
+            <h2 style="margin-bottom: 2rem;">📚 Educational Hub</h2>
+            
+            <div class="tutorial-grid">
+                <div class="card tutorial-card">
+                    <span class="difficulty difficulty-beginner">Beginner</span>
+                    <h3>Getting Started with Nostr</h3>
+                    <p>Learn the basics of the Nostr protocol and how to create your first events.</p>
+                    <div class="code-example">
+import { generatePrivateKey, getPublicKey, finishEvent } from 'nostr-tools'
+
+const sk = generatePrivateKey()
+const pk = getPublicKey(sk)
+
+const event = finishEvent({
+  kind: 1,
+  created_at: Math.floor(Date.now() / 1000),
+  tags: [],
+  content: 'Hello Nostr!',
+}, sk)</div>
+                </div>
+                
+                <div class="card tutorial-card">
+                    <span class="difficulty difficulty-intermediate">Intermediate</span>
+                    <h3>Running Your Own Relay</h3>
+                    <p>Step-by-step guide to deploying and configuring a Nostr relay.</p>
+                    <div class="code-example">
+# Clone the Pleb.One relay
+git clone https://github.com/pleb-one/relay
+cd relay
+
+# Configure environment
+export DATABASE_URL="postgresql://..."
+export RELAY_NAME="My Relay"
+
+# Run the relay
+cargo run</div>
+                </div>
+                
+                <div class="card tutorial-card">
+                    <span class="difficulty difficulty-advanced">Advanced</span>
+                    <h3>NIP Implementation Guide</h3>
+                    <p>Deep dive into Nostr Improvement Proposals and custom implementations.</p>
+                    <div class="code-example">
+// Implementing NIP-05 verification
+async function verifyNip05(pubkey: string, identifier: string) {
+  const [name, domain] = identifier.split('@')
+  const url = `https://${domain}/.well-known/nostr.json`
+  
+  const response = await fetch(url)
+  const data = await response.json()
+  
+  return data.names[name] === pubkey
+}</div>
+                </div>
+                
+                <div class="card tutorial-card">
+                    <span class="difficulty difficulty-beginner">Beginner</span>
+                    <h3>Client Development Basics</h3>
+                    <p>Build your first Nostr client application with real-time features.</p>
+                    <ul class="feature-list">
+                        <li>WebSocket connections</li>
+                        <li>Event subscription</li>
+                        <li>User interface design</li>
+                        <li>Key management</li>
+                    </ul>
+                </div>
+                
+                <div class="card tutorial-card">
+                    <span class="difficulty difficulty-intermediate">Intermediate</span>
+                    <h3>Database Integration</h3>
+                    <p>Learn to store and query Nostr events efficiently with PostgreSQL.</p>
+                    <ul class="feature-list">
+                        <li>Schema design</li>
+                        <li>Index optimization</li>
+                        <li>Query performance</li>
+                        <li>Backup strategies</li>
+                    </ul>
+                </div>
+                
+                <div class="card tutorial-card">
+                    <span class="difficulty difficulty-advanced">Advanced</span>
+                    <h3>Community Governance</h3>
+                    <p>Implement democratic decision-making systems for relay networks.</p>
+                    <ul class="feature-list">
+                        <li>Proposal systems</li>
+                        <li>Voting mechanisms</li>
+                        <li>Council management</li>
+                        <li>Reputation tracking</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Community Page -->
+        <div id="community" class="page">
+            <h2 style="margin-bottom: 2rem;">🏛️ Community Governance</h2>
+            
+            <div class="grid grid-3">
+                <div class="card">
+                    <h3>🛡️ Technical Council</h3>
+                    <p>Reviews technical proposals and protocol improvements</p>
+                    <div style="margin-top: 1rem;">
+                        <div class="metric-value" style="font-size: 1.5rem;">12</div>
+                        <div class="metric-label">Members</div>
+                    </div>
+                    <span class="status status-active">8 Active Proposals</span>
+                </div>
+                
+                <div class="card">
+                    <h3>👥 Moderation Council</h3>
+                    <p>Handles content moderation and community guidelines</p>
+                    <div style="margin-top: 1rem;">
+                        <div class="metric-value" style="font-size: 1.5rem;">8</div>
+                        <div class="metric-label">Members</div>
+                    </div>
+                    <span class="status status-healthy">3 Active Proposals</span>
+                </div>
+                
+                <div class="card">
+                    <h3>💰 Treasury Council</h3>
+                    <p>Manages community funds and resource allocation</p>
+                    <div style="margin-top: 1rem;">
+                        <div class="metric-value" style="font-size: 1.5rem;">6</div>
+                        <div class="metric-label">Members</div>
+                    </div>
+                    <span class="status status-warning">5 Active Proposals</span>
+                </div>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem;">Active Proposals</h3>
+            
+            <div class="proposal">
+                <div class="proposal-title">Implement NIP-50 Search Functionality</div>
+                <div class="proposal-meta">by alice@pleb.one • Technical Council • 3 days left</div>
+                <p style="margin: 1rem 0;">Add full-text search capabilities to the relay to improve discoverability of content.</p>
+                
+                <div class="vote-bar">
+                    <div class="vote-for" style="width: 75%;"></div>
+                    <div class="vote-against" style="width: 15%;"></div>
+                    <div class="vote-abstain" style="width: 10%;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: #666;">
+                    <span>👍 156 For</span>
+                    <span>👎 23 Against</span>
+                    <span>🤷 12 Abstain</span>
+                </div>
+                
+                <div class="vote-buttons">
+                    <button class="vote-btn vote-for-btn">Vote For</button>
+                    <button class="vote-btn vote-against-btn">Vote Against</button>
+                    <button class="vote-btn vote-abstain-btn">Abstain</button>
+                </div>
+            </div>
+            
+            <div class="proposal">
+                <div class="proposal-title">Fund Open Source Development Bounties</div>
+                <div class="proposal-meta">by charlie@pleb.one • Treasury Council • Passed</div>
+                <p style="margin: 1rem 0;">Allocate 50,000 sats to fund bounties for community-requested features and improvements.</p>
+                
+                <div class="vote-bar">
+                    <div class="vote-for" style="width: 90%;"></div>
+                    <div class="vote-against" style="width: 5%;"></div>
+                    <div class="vote-abstain" style="width: 5%;"></div>
+                </div>
+                <span class="status status-healthy">Passed</span>
+            </div>
+        </div>
+
+        <!-- Identity Page -->
+        <div id="identity" class="page">
+            <h2 style="margin-bottom: 2rem;">🔐 Identity Management</h2>
+            
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>Your Identities</h3>
+                <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>alice@pleb.one</strong>
+                            <span class="status status-healthy" style="margin-left: 1rem;">Verified</span>
+                            <div style="font-family: monospace; font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+                                npub1alice123...
+                            </div>
+                            <div style="font-size: 0.9rem; color: #666;">
+                                Created: 2024-01-15 • Key: Ed25519 • Status: active
+                            </div>
+                        </div>
+                        <button class="cta-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Manage</button>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 1rem;">Verification Methods</h3>
+            <div class="grid grid-2">
+                <div class="card">
+                    <h3>🛡️ NIP-05 Verification</h3>
+                    <p>Link your identity to a domain you control</p>
+                    <span class="status status-healthy">Available</span>
+                    <span class="difficulty difficulty-beginner" style="margin-left: 1rem;">Easy</span>
+                    <button class="cta-button" style="width: 100%; margin-top: 1rem;">Setup Verification</button>
+                </div>
+                
+                <div class="card">
+                    <h3>👤 GitHub Verification</h3>
+                    <p>Verify your identity with your GitHub account</p>
+                    <span class="status status-healthy">Available</span>
+                    <span class="difficulty difficulty-beginner" style="margin-left: 1rem;">Easy</span>
+                    <button class="cta-button" style="width: 100%; margin-top: 1rem;">Setup Verification</button>
+                </div>
+                
+                <div class="card">
+                    <h3>🔑 Hardware Key</h3>
+                    <p>Use a hardware security key for verification</p>
+                    <span class="status status-warning">Coming Soon</span>
+                    <span class="difficulty difficulty-advanced" style="margin-left: 1rem;">Advanced</span>
+                    <button class="cta-button" style="width: 100%; margin-top: 1rem; opacity: 0.5;" disabled>Coming Soon</button>
+                </div>
+                
+                <div class="card">
+                    <h3>⚡ Lightning Verification</h3>
+                    <p>Verify ownership through Lightning Network transactions</p>
+                    <span class="status status-warning">Beta</span>
+                    <span class="difficulty difficulty-intermediate" style="margin-left: 1rem;">Medium</span>
+                    <button class="cta-button" style="width: 100%; margin-top: 1rem;">Try Beta</button>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <h3>🔒 Security Best Practices</h3>
+                <ul class="feature-list" style="margin-top: 1rem;">
+                    <li>Keep your private keys secure and never share them</li>
+                    <li>Use hardware security keys for high-value identities</li>
+                    <li>Regularly rotate your keys and update verification methods</li>
+                    <li>Enable multiple verification methods for redundancy</li>
+                    <li>Backup your recovery keys in a secure location</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Add active class to clicked nav link
+            event.target.classList.add('active');
+        }
+
+        // Load real metrics from API
+        async function loadMetrics() {
+            try {
+                const response = await fetch('http://localhost:8080/api/metrics/all');
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update home page metrics
+                    document.getElementById('home-connections').textContent = data.relay_status.active_connections;
+                    document.getElementById('home-events').textContent = data.events.events_received.toLocaleString();
+                    
+                    // Update dashboard metrics
+                    document.getElementById('dash-connections').textContent = data.relay_status.active_connections;
+                    document.getElementById('dash-events').textContent = data.events.events_received.toLocaleString();
+                }
+            } catch (error) {
+                console.log('Using demo data - relay not running');
+            }
+        }
+
+        // Load metrics on page load and refresh every 5 seconds
+        loadMetrics();
+        setInterval(loadMetrics, 5000);
+    </script>
+</body>
+</html>

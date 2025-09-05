@@ -1,0 +1,366 @@
+version: '3.8'
+
+services:
+  # Core Infrastructure
+  postgres:
+    image: timescale/timescaledb:latest-pg15
+    container_name: pleb-one-postgres
+    environment:
+      POSTGRES_DB: pleb_one
+      POSTGRES_USER: pleb_one
+      POSTGRES_PASSWORD: development
+      TIMESCALEDB_TELEMETRY: 'off'
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init/postgres:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pleb_one -d pleb_one"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - pleb-one-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: pleb-one-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - pleb-one-network
+
+  nats:
+    image: nats:2.10-alpine
+    container_name: pleb-one-nats
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+      - "6222:6222"
+    command: 
+      - "--http_port"
+      - "8222"
+      - "--cluster_name"
+      - "pleb-one-cluster"
+      - "--jetstream"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8222/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - pleb-one-network
+
+  # Rust Services
+  relay-engine:
+    build:
+      context: ../../services/relay-engine
+      dockerfile: Dockerfile
+      target: development
+    container_name: pleb-one-relay
+    ports:
+      - "8080:8080"
+      - "9090:9090"  # Metrics
+      - "8081:8081"  # Health
+    environment:
+      RUST_LOG: info
+      ENVIRONMENT: development
+      DATABASE_URL: postgres://pleb_one:development@postgres:5432/pleb_one
+      REDIS_URL: redis://redis:6379
+      NATS_URL: nats://nats:4222
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    volumes:
+      - ../../config:/app/config:ro
+    networks:
+      - pleb-one-network
+    restart: unless-stopped
+
+  # Go Services
+  api-gateway:
+    build:
+      context: ../../services/api-gateway
+      dockerfile: Dockerfile
+      target: development
+    container_name: pleb-one-api-gateway
+    ports:
+      - "8000:8000"
+      - "9091:9091"  # Metrics
+    environment:
+      ENVIRONMENT: development
+      DATABASE_URL: postgres://pleb_one:development@postgres:5432/pleb_one
+      REDIS_URL: redis://redis:6379
+      RELAY_URL: ws://relay-engine:8080
+      JWT_SECRET: development-secret-key-change-in-production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      relay-engine:
+        condition: service_started
+    volumes:
+      - ../../config:/app/config:ro
+    networks:
+      - pleb-one-network
+    restart: unless-stopped
+
+  billing-service:
+    build:
+      context: ../../services/billing-service
+      dockerfile: Dockerfile
+      target: development
+    container_name: pleb-one-billing
+    ports:
+      - "8001:8001"
+      - "9092:9092"  # Metrics
+    environment:
+      ENVIRONMENT: development
+      DATABASE_URL: postgres://pleb_one:development@postgres:5432/pleb_one
+      REDIS_URL: redis://redis:6379
+      LIGHTNING_NODE_URL: http://lightning-node:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../../config:/app/config:ro
+    networks:
+      - pleb-one-network
+    restart: unless-stopped
+
+  analytics-service:
+    build:
+      context: ../../services/analytics-service
+      dockerfile: Dockerfile
+      target: development
+    container_name: pleb-one-analytics
+    ports:
+      - "8003:8003"
+      - "9094:9094"  # Metrics
+    environment:
+      RUST_LOG: info
+      ENVIRONMENT: development
+      DATABASE_URL: postgres://pleb_one:development@postgres:5432/pleb_one
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../../config:/app/config:ro
+    networks:
+      - pleb-one-network
+    restart: unless-stopped
+
+  analytics-api:
+    build:
+      context: ../../services/analytics-api
+      dockerfile: Dockerfile
+      target: development
+    container_name: pleb-one-analytics-api
+    ports:
+      - "8002:8002"
+      - "9093:9093"  # Metrics
+    environment:
+      ENVIRONMENT: development
+      DATABASE_URL: postgres://pleb_one:development@postgres:5432/pleb_one
+      REDIS_URL: redis://redis:6379
+      ANALYTICS_SERVICE_URL: http://analytics-service:8003
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      analytics-service:
+        condition: service_started
+    volumes:
+      - ../../config:/app/config:ro
+    networks:
+      - pleb-one-network
+    restart: unless-stopped
+
+  blossom-server:
+    build:
+      context: ../../services/blossom-server
+      dockerfile: Dockerfile
+      target: development
+    container_name: pleb-one-blossom
+    ports:
+      - "8004:8004"
+      - "9095:9095"  # Metrics
+    environment:
+      ENVIRONMENT: development
+      DATABASE_URL: postgres://pleb_one:development@postgres:5432/pleb_one
+      REDIS_URL: redis://redis:6379
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      MINIO_BUCKET: blossom-files
+      MAX_FILE_SIZE: 104857600
+      ALLOWED_TYPES: "image/jpeg,image/png,image/gif,image/webp,video/mp4,audio/mpeg"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    volumes:
+      - ../../config:/app/config:ro
+    networks:
+      - pleb-one-network
+    restart: unless-stopped
+
+  # Object Storage for Blossom
+  minio:
+    image: minio/minio:latest
+    container_name: pleb-one-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - pleb-one-network
+
+  # Frontend
+  web:
+    build:
+      context: ../../frontend/web
+      dockerfile: Dockerfile
+      target: development
+    container_name: pleb-one-web
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_RELAY_URL: ws://localhost:8080
+      NEXT_PUBLIC_ENVIRONMENT: development
+    depends_on:
+      - api-gateway
+    volumes:
+      - ../../frontend/web:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - pleb-one-network
+    restart: unless-stopped
+
+  # Monitoring & Observability
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: pleb-one-prometheus
+    ports:
+      - "9093:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - pleb-one-network
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: pleb-one-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    depends_on:
+      - prometheus
+    networks:
+      - pleb-one-network
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: pleb-one-jaeger
+    ports:
+      - "16686:16686"
+      - "14268:14268"
+    environment:
+      COLLECTOR_OTLP_ENABLED: true
+    networks:
+      - pleb-one-network
+
+  # Development Tools
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: pleb-one-mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - pleb-one-network
+
+  # Load Balancer (for production-like testing)
+  nginx:
+    image: nginx:alpine
+    container_name: pleb-one-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - web
+      - api-gateway
+    networks:
+      - pleb-one-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  minio_data:
+    driver: local
+
+networks:
+  pleb-one-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

@@ -1,0 +1,16 @@
+[package]
+name = "pleb-one-config"
+version = "0.1.0"
+edition = "2021"
+description = "Configuration management for Pleb.One services"
+
+[dependencies]
+serde = { workspace = true }
+toml = { workspace = true }
+config = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

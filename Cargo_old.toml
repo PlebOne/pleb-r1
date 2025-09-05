@@ -1,0 +1,86 @@
+[workspace]
+members = [
+    "services/relay-engine",
+    "services/nostr-types",        # Core Nostr types and validation
+    "services/storage-layer",      # Database abstraction layer
+    "services/event-processor",    # Event validation and processing
+    "services/auth-service",       # Authentication and authorization
+    "services/metrics-collector",  # Performance metrics
+    "services/config-manager",     # Configuration management
+    "services/analytics-service"   # Analytics and reporting
+]
+resolver = "2"
+
+[workspace.dependencies]
+[workspace.dependencies]
+# Async Runtime
+tokio = { version = "1.34", features = ["full"] }
+tokio-tungstenite = "0.20"
+futures-util = "0.3"
+
+# Web Framework & HTTP
+axum = { version = "0.7", features = ["ws", "tokio", "tower-log"] }
+tower = { version = "0.4", features = ["full"] }
+tower-http = { version = "0.5", features = ["fs", "trace", "cors", "compression-gzip"] }
+hyper = { version = "1.0", features = ["full"] }
+
+# Nostr Protocol (Use existing battle-tested implementations)
+nostr = { version = "0.32", features = ["nip04", "nip05", "nip06", "nip11", "nip13", "nip42", "nip46", "nip47", "nip59", "nip65", "nip90", "nip94"] }
+nostr-relay-pool = "0.32"
+nostr-database = { version = "0.32", features = ["flatbuffers", "lmdb", "rocksdb"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+
+# Configuration Management
+config = "0.14"
+figment = { version = "0.10", features = ["toml", "json", "yaml", "env"] }
+clap = { version = "4.0", features = ["derive"] }
+
+# Database & Storage
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "json"] }
+redis = { version = "0.24", features = ["tokio-comp", "streams", "cluster"] }
+deadpool-redis = "0.14"
+deadpool-postgres = "0.12"
+
+# Metrics & Monitoring (Prometheus ecosystem)
+prometheus = "0.13"
+metrics = "0.21"
+metrics-exporter-prometheus = "0.12"
+opentelemetry = { version = "0.20", features = ["metrics"] }
+
+# Logging & Tracing
+tracing = { version = "0.1", features = ["log"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tracing-opentelemetry = "0.21"
+
+# Rate Limiting (Proven solutions)
+governor = "0.6"
+tower-governor = "0.0.4"
+
+# Authentication & Authorization
+jsonwebtoken = "9.1"
+argon2 = "0.5"
+
+# Cryptography (Established libraries)
+secp256k1 = { version = "0.28", features = ["rand", "serde"] }
+sha2 = "0.10"
+hex = "0.4"
+ring = "0.17"
+
+# Error Handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Utilities
+uuid = { version = "1.0", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+once_cell = "1.19"
+dashmap = "5.5"
+parking_lot = "0.12"
+
+# Testing
+mockall = "0.12"
+tempfile = "3.8"

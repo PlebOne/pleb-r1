@@ -1,0 +1,64 @@
+# Production Configuration for Pleb.One
+# Override settings for production environment
+
+[environment]
+name = "production"
+debug = false
+
+[server]
+port = 8000
+
+[relay]
+port = 8080
+health_port = 8081
+max_connections = 50000
+
+[database]
+url = "${DATABASE_URL}"
+max_connections = 50
+min_connections = 10
+
+[cache]
+url = "${REDIS_URL}"
+pool_size = 20
+
+[auth]
+jwt_secret = "${JWT_SECRET}"
+bcrypt_cost = 14
+
+[logging]
+level = "info"
+format = "json"
+
+[cors]
+allowed_origins = ["https://pleb.one", "https://api.pleb.one"]
+
+[rate_limiting]
+requests_per_minute = 60
+burst_size = 5
+
+[lightning]
+node_url = "${LIGHTNING_NODE_URL}"
+network = "bitcoin"
+
+[email]
+smtp_host = "${SMTP_HOST}"
+smtp_port = 587
+smtp_user = "${SMTP_USER}"
+smtp_password = "${SMTP_PASSWORD}"
+from_address = "noreply@pleb.one"
+
+[security]
+require_email_verification = true
+max_login_attempts = 3
+lockout_duration = "30m"
+
+[monitoring]
+jaeger_endpoint = "${JAEGER_ENDPOINT}"
+
+[development]
+hot_reload = false
+debug_sql = false
+seed_data = false
+mock_lightning = false
+bypass_email_verification = false

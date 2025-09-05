@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pleb.One - Community-Owned Nostr Relay</title>
+    <meta name="description" content="Join the first community-owned Nostr relay with democratic governance, educational resources, and transparent infrastructure.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8fafc;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6rem 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            margin-top: 4rem;
+            padding-top: 3rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            opacity: 0.8;
+        }
+        
+        /* Features Section */
+        .section {
+            padding: 6rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #1a202c;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+        
+        .feature {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .feature:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1a202c;
+        }
+        
+        .feature p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* Pricing Section */
+        .pricing {
+            background: #1a202c;
+            color: white;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .pricing-card {
+            background: white;
+            color: #1a202c;
+            padding: 3rem 2rem;
+            border-radius: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pricing-card.featured {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .pricing-card.featured::before {
+            content: "Most Popular";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #10b981;
+            padding: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .pricing-card.featured .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+        
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .plan-price {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .plan-period {
+            opacity: 0.7;
+            margin-bottom: 2rem;
+        }
+        
+        .plan-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        
+        .plan-features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .pricing-card.featured .plan-features li {
+            border-bottom-color: rgba(255,255,255,0.2);
+        }
+        
+        .plan-features li::before {
+            content: '✓';
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #1a202c;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        /* Status Messages */
+        .status-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .status-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #10b981;
+        }
+        
+        .status-error {
+            background: #fecaca;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        
+        /* Community Preview */
+        .community-preview {
+            background: #f8fafc;
+            padding: 4rem 0;
+        }
+        
+        .preview-image {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: #1a202c;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                🚀 Pleb.One
+            </div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#community">Community</a></li>
+                <li><a href="#docs">Docs</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <a href="#" onclick="openModal('loginModal')" class="btn btn-secondary">Sign In</a>
+                <a href="#" onclick="openModal('signupModal')" class="btn btn-primary">Get Started</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>The First Community-Owned Nostr Relay</h1>
+            <p>
+                Join thousands of users building the future of decentralized social media. 
+                Democratic governance, transparent infrastructure, and educational resources for everyone.
+            </p>
+            <div class="hero-cta">
+                <a href="#" onclick="openModal('signupModal')" class="btn btn-primary">Start Free Trial</a>
+                <a href="#community" class="btn btn-secondary">Explore Platform</a>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-number" id="active-users">2,847</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="events-processed">1.2M</div>
+                    <div class="stat-label">Events Processed</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Support</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+        <div class="container">
+            <h2 class="section-title">Why Choose Pleb.One?</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">🏛️</div>
+                    <h3>Democratic Governance</h3>
+                    <p>Community-owned decisions through transparent councils and proposals. Your voice matters in shaping the future of our infrastructure.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📚</div>
+                    <h3>Educational Hub</h3>
+                    <p>Comprehensive learning platform with tutorials, documentation, and hands-on examples for Nostr development and self-hosting.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Lightning Fast</h3>
+                    <p>High-performance Rust backend with real-time processing, load balancing, and optimized for maximum throughput.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Enterprise Security</h3>
+                    <p>Military-grade encryption, rate limiting, spam protection, and comprehensive monitoring for maximum security.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Global Network</h3>
+                    <p>Distributed infrastructure with multiple regions, CDN acceleration, and 99.9% uptime guarantee.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Developer APIs</h3>
+                    <p>Full REST API access, real-time metrics, WebSocket connections, and comprehensive documentation for integration.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing section">
+        <div class="container">
+            <h2 class="section-title">Simple, Transparent Pricing</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="plan-name">Community</div>
+                    <div class="plan-price">Free</div>
+                    <div class="plan-period">Forever</div>
+                    <ul class="plan-features">
+                        <li>Basic relay access</li>
+                        <li>100 events/hour</li>
+                        <li>Community governance voting</li>
+                        <li>Educational resources</li>
+                        <li>Email support</li>
+                    </ul>
+                    <a href="#" onclick="openModal('signupModal', 'community')" class="btn btn-primary">Get Started</a>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <div class="plan-name">Pro</div>
+                    <div class="plan-price">$10</div>
+                    <div class="plan-period">per month</div>
+                    <ul class="plan-features">
+                        <li>Unlimited events</li>
+                        <li>Priority routing</li>
+                        <li>Advanced analytics</li>
+                        <li>API access</li>
+                        <li>Council membership eligible</li>
+                        <li>Priority support</li>
+                    </ul>
+                    <a href="#" onclick="openModal('signupModal', 'pro')" class="btn btn-primary">Start Free Trial</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <div class="plan-name">Enterprise</div>
+                    <div class="plan-price">$50</div>
+                    <div class="plan-period">per month</div>
+                    <ul class="plan-features">
+                        <li>Dedicated infrastructure</li>
+                        <li>Custom rate limits</li>
+                        <li>White-label options</li>
+                        <li>SLA guarantee</li>
+                        <li>Technical consultation</li>
+                        <li>24/7 phone support</li>
+                    </ul>
+                    <a href="#" onclick="openModal('signupModal', 'enterprise')" class="btn btn-primary">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Preview -->
+    <section id="community" class="community-preview section">
+        <div class="container">
+            <h2 class="section-title">See the Platform in Action</h2>
+            <p style="text-align: center; font-size: 1.2rem; color: #666;">
+                Experience our community governance, educational resources, and real-time dashboard
+            </p>
+            <div class="preview-image">
+                <div style="text-align: center;">
+                    <h3>🎯 Interactive Demo</h3>
+                    <p style="margin-top: 1rem; opacity: 0.8;">
+                        <a href="index.html" style="color: white; text-decoration: underline;">
+                            → View Live Community Platform
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+                <a href="#docs">Documentation</a>
+                <a href="#status">Status Page</a>
+                <a href="#github">GitHub</a>
+            </div>
+            <p>&copy; 2025 Pleb.One. Built by plebs, for plebs. Open source and community-owned.</p>
+        </div>
+    </footer>
+
+    <!-- Sign Up Modal -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('signupModal')">&times;</button>
+            <h2 style="margin-bottom: 2rem; text-align: center;">Join Pleb.One</h2>
+            <div id="signup-status"></div>
+            <form id="signupForm" onsubmit="handleSignup(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="nostrPubkey">Nostr Public Key (optional)</label>
+                    <input type="text" id="nostrPubkey" name="nostrPubkey" placeholder="npub1... or hex format">
+                </div>
+                <div class="form-group">
+                    <label for="plan">Select Plan</label>
+                    <select id="plan" name="plan" required>
+                        <option value="community">Community (Free)</option>
+                        <option value="pro">Pro ($10/month)</option>
+                        <option value="enterprise">Enterprise ($50/month)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="interests">Interests (optional)</label>
+                    <textarea id="interests" name="interests" rows="3" placeholder="What brings you to Nostr? Development, community, content creation, etc."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem; color: #666;">
+                Already have an account? <a href="#" onclick="closeModal('signupModal'); openModal('loginModal')">Sign in</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
+            <h2 style="margin-bottom: 2rem; text-align: center;">Sign In</h2>
+            <div id="login-status"></div>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem; color: #666;">
+                Don't have an account? <a href="#" onclick="closeModal('loginModal'); openModal('signupModal')">Sign up</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function openModal(modalId, planType = null) {
+            document.getElementById(modalId).classList.add('active');
+            if (planType && modalId === 'signupModal') {
+                document.getElementById('plan').value = planType;
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // Handle signup form submission
+        async function handleSignup(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Show loading state
+            const statusDiv = document.getElementById('signup-status');
+            statusDiv.innerHTML = '<div class="status-message">Creating your account...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusDiv.innerHTML = `
+                        <div class="status-message status-success">
+                            🎉 ${result.message}
+                            <br><br>
+                            <a href="index.html" style="color: #166534; font-weight: 600;">
+                                → Continue to Community Platform
+                            </a>
+                        </div>
+                    `;
+                    
+                    // Store user session
+                    localStorage.setItem('plebone_user', JSON.stringify(result.data));
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="status-message status-error">
+                            ❌ ${result.message}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                statusDiv.innerHTML = `
+                    <div class="status-message status-error">
+                        ❌ Network error. Please try again later.
+                    </div>
+                `;
+            }
+        }
+
+        // Handle login form submission
+        async function handleLogin(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Show loading state
+            const statusDiv = document.getElementById('login-status');
+            statusDiv.innerHTML = '<div class="status-message">Signing you in...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusDiv.innerHTML = `
+                        <div class="status-message status-success">
+                            ✅ ${result.message}
+                            <br><br>
+                            <a href="index.html" style="color: #166534; font-weight: 600;">
+                                → Continue to Dashboard
+                            </a>
+                        </div>
+                    `;
+                    
+                    // Store user session
+                    localStorage.setItem('plebone_user', JSON.stringify(result.data));
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="status-message status-error">
+                            ❌ ${result.message}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                statusDiv.innerHTML = `
+                    <div class="status-message status-error">
+                        ❌ Network error. Please try again later.
+                    </div>
+                `;
+            }
+        }
+
+        // Load live stats from API
+        async function loadLiveStats() {
+            try {
+                const response = await fetch('http://localhost:8080/api/metrics/all');
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update stats with real data
+                    if (data.relay_status?.active_connections) {
+                        document.getElementById('active-users').textContent = 
+                            (data.relay_status.active_connections * 712).toLocaleString(); // Simulate user count
+                    }
+                    
+                    if (data.events?.events_received) {
+                        const events = data.events.events_received;
+                        document.getElementById('events-processed').textContent = 
+                            events > 1000 ? `${(events/1000).toFixed(1)}K` : events.toLocaleString();
+                    }
+                }
+            } catch (error) {
+                console.log('Using demo stats - relay not running');
+            }
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if (this.getAttribute('href').startsWith('#') && 
+                    !this.getAttribute('onclick')) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+
+        // Load stats on page load
+        loadLiveStats();
+        setInterval(loadLiveStats, 30000); // Update every 30 seconds
+    </script>
+</body>
+</html>

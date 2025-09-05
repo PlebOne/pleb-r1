@@ -1,0 +1,71 @@
+[package]
+name = "relay-engine"
+version = "0.1.0"
+edition = "2021"
+description = "High-performance Nostr relay engine for Pleb.One using rust-nostr"
+
+[[bin]]
+name = "relay-engine"
+path = "src/main.rs"
+
+[[bin]]
+name = "dev-server"
+path = "src/dev_main.rs"
+
+[dependencies]
+# Rust-nostr ecosystem
+nostr = { workspace = true }
+nostr-database = { workspace = true }
+
+# Web and networking
+tokio = { workspace = true }
+tokio-tungstenite = { workspace = true }
+axum = { workspace = true }
+tower = { workspace = true }
+tower-http = { workspace = true }
+futures-util = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Database
+sqlx = { version = "0.7", features = ["sqlite", "postgres", "runtime-tokio-rustls", "migrate", "macros", "json"] }
+redis = { workspace = true }
+
+# Configuration
+config = { workspace = true }
+figment = { workspace = true }
+clap = { workspace = true }
+
+# Utilities
+uuid = { workspace = true }
+chrono = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+# Rate limiting
+governor = { workspace = true }
+
+# Metrics
+prometheus = { workspace = true }
+metrics = { workspace = true }
+
+[dev-dependencies]
+tokio-test = { workspace = true }
+tempfile = { workspace = true }
+mockall = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+reqwest = { version = "0.11", features = ["json"] }
+tokio-tungstenite = { workspace = true }
+futures-util = { workspace = true }
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "relay_benchmarks"
+harness = false
