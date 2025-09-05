@@ -10,14 +10,14 @@ services:
       context: .
       dockerfile: services/relay-engine/Dockerfile
       target: builder  # Stop at builder stage for development
-    container_name: pleb-one-dev-relay
+    container_name: pleb-r1-dev-relay
     restart: unless-stopped
     command: ["./dev-server"]
     environment:
       DATABASE_URL: sqlite:/app/data/dev.db
       PORT: 8080
       RUST_LOG: debug
-      RELAY_NAME: "Pleb.One Development Relay"
+      RELAY_NAME: "Pleb-R1 Development Relay"
       RELAY_DESCRIPTION: "Development server with authentication API"
     ports:
       - "8080:8080"
@@ -26,7 +26,7 @@ services:
       - dev_data:/app/data
       - dev_logs:/app/logs
     networks:
-      - dev-network
+      - pleb-r1-dev-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/metrics/all"]
       interval: 30s
@@ -36,7 +36,7 @@ services:
   # Simple frontend serving
   dev-web:
     image: nginx:alpine
-    container_name: pleb-one-dev-web
+    container_name: pleb-r1-dev-web
     restart: unless-stopped
     ports:
       - "3000:80"
@@ -44,19 +44,19 @@ services:
       - ./services/community-web:/usr/share/nginx/html:ro
       - ./services/community-web/nginx.dev.conf:/etc/nginx/nginx.conf:ro
     networks:
-      - dev-network
+      - pleb-r1-dev-network
     depends_on:
       - dev-relay
 
   # Development database (SQLite via volume mount)
   dev-db-viewer:
     image: adminer
-    container_name: pleb-one-db-viewer
+    container_name: pleb-r1-db-viewer
     restart: unless-stopped
     ports:
       - "8081:8080"
     networks:
-      - dev-network
+      - pleb-r1-dev-network
     profiles:
       - db-tools
 
@@ -65,5 +65,5 @@ volumes:
   dev_logs:
 
 networks:
-  dev-network:
+  pleb-r1-dev-network:
     driver: bridge

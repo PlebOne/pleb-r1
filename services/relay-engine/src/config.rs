@@ -14,13 +14,13 @@ impl Config {
     pub fn from_env() -> Self {
         Self {
             database_url: env::var("DATABASE_URL")
-                .unwrap_or_else(|_| "postgresql://postgres:password@localhost:5432/pleb_one".to_string()),
+                .unwrap_or_else(|_| "postgresql://postgres:password@localhost:5432/pleb_r1".to_string()),
             port: env::var("PORT")
                 .unwrap_or_else(|_| "8080".to_string())
                 .parse()
                 .unwrap_or(8080),
             relay_name: env::var("RELAY_NAME")
-                .unwrap_or_else(|_| "Pleb.One Relay".to_string()),
+                .unwrap_or_else(|_| "Pleb-R1 Relay".to_string()),
             relay_description: env::var("RELAY_DESCRIPTION")
                 .unwrap_or_else(|_| "A community-owned Nostr relay".to_string()),
             relay_pubkey: env::var("RELAY_PUBKEY").ok(),
@@ -46,7 +46,7 @@ mod tests {
 
         let config = Config::from_env();
 
-        assert_eq!(config.database_url, "postgresql://postgres:password@localhost:5432/pleb_one");
+        assert_eq!(config.database_url, "postgresql://postgres:password@localhost:5432/pleb_r1");
         assert_eq!(config.port, 8080);
         assert_eq!(config.relay_name, "Pleb.One Relay");
         assert_eq!(config.relay_description, "A community-owned Nostr relay");

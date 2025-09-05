@@ -12,8 +12,8 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
-  # Pleb.One Relay Engine
-  - job_name: 'pleb-one-relay'
+  # Pleb-R1 Relay Engine
+  - job_name: 'pleb-r1-relay'
     static_configs:
       - targets: ['relay-engine:8080']
     metrics_path: '/metrics'
@@ -21,7 +21,7 @@ scrape_configs:
     scrape_timeout: 5s
 
   # Development server (when running)
-  - job_name: 'pleb-one-dev'
+  - job_name: 'pleb-r1-dev'
     static_configs:
       - targets: ['dev-server:8080']
     metrics_path: '/api/metrics/all'

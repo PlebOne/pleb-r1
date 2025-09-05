@@ -1,8 +1,8 @@
-# Development Guide - Pleb.One
+# Development Guide - Pleb-R1
 
 ## 🚀 Getting Started
 
-This guide will help you set up and run the Pleb.One relay and authentication system for development.
+This guide will help you set up and run the Pleb-R1 relay and authentication system for development.
 
 ## 📋 Prerequisites
 
@@ -41,8 +41,8 @@ This guide will help you set up and run the Pleb.One relay and authentication sy
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/pleb-one/pleb-one.git
-cd pleb-one
+git clone https://github.com/PlebOne/pleb-r1.git
+cd pleb-r1
 ```
 
 ### 2. Set Up Rust Environment
@@ -84,13 +84,13 @@ Create a `.env` file in `services/relay-engine/`:
 ```env
 # Database Configuration
 DATABASE_URL=sqlite:./data/relay.db
-# DATABASE_URL=postgresql://username:password@localhost:5432/pleb_one
+# DATABASE_URL=postgresql://username:password@localhost:5432/pleb_r1
 
 # Relay Configuration
-RELAY_NAME="Pleb.One Development Relay"
+RELAY_NAME="Pleb-R1 Development Relay"
 RELAY_DESCRIPTION="A community-owned Nostr relay (Development)"
 RELAY_PUBKEY="your_relay_pubkey_here"
-RELAY_CONTACT="dev@pleb.one"
+RELAY_CONTACT="dev@pleb-r1.com"
 
 # Server Configuration
 PORT=8080

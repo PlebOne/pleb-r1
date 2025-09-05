@@ -58,11 +58,11 @@ async fn main() -> anyhow::Result<()> {
         .with_max_level(tracing::Level::INFO)
         .init();
     
-    println!("🚀 Starting Pleb.One Development Server...");
+    println!("🚀 Starting Pleb-R1 Development Server...");
     
     let config = Config::from_env();
     println!("📋 Configuration loaded successfully");
-    info!("Starting Pleb.One Development Server with Authentication");
+    info!("Starting Pleb-R1 Development Server with Authentication");
     
     let state = DevAppState { config };
 
@@ -96,7 +96,7 @@ async fn main() -> anyhow::Result<()> {
         }
     };
     
-    println!("🚀 Pleb.One Development Server running on http://localhost:8080");
+    println!("🚀 Pleb-R1 Development Server running on http://localhost:8080");
     println!("📊 API Endpoints available:");
     println!("   - http://localhost:8080/api/auth/signup");
     println!("   - http://localhost:8080/api/auth/login");

@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# Docker deployment scripts for Pleb.One
+# Docker deployment scripts for Pleb-R1
 
 param(
     [Parameter(Position=0)]
@@ -10,7 +10,7 @@ param(
     [string]$Service = ""
 )
 
-Write-Host "🐳 Pleb.One Docker Management" -ForegroundColor Cyan
+Write-Host "🐳 Pleb-R1 Docker Management" -ForegroundColor Cyan
 
 switch ($Command) {
     "dev" {

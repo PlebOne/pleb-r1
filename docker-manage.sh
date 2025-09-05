@@ -1,12 +1,12 @@
 #!/bin/bash
-# Docker deployment scripts for Pleb.One
+# Docker deployment scripts for Pleb-R1
 
 set -e
 
 COMMAND=${1:-dev}
 SERVICE=$2
 
-echo "🐳 Pleb.One Docker Management"
+echo "🐳 Pleb-R1 Docker Management"
 
 case $COMMAND in
     "dev")

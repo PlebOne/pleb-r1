@@ -1,4 +1,4 @@
-# 🚀 Pleb.One - Community-Owned Nostr Relay
+# 🚀 Pleb-R1 - Community-Owned Nostr Relay
 
 ## ✅ **PRODUCTION-READY IMPLEMENTATION**
 
@@ -33,8 +33,8 @@ cp .env.docker .env
 ### Option 2: Development Server with Authentication
 ```powershell
 # 1. Clone and navigate
-git clone https://github.com/PlebOne/pleb-one.git
-cd pleb-one/services/relay-engine
+git clone https://github.com/PlebOne/pleb-r1.git
+cd pleb-r1/services/relay-engine
 
 # 2. Start the authentication development server
 cargo run --bin dev-server
@@ -110,7 +110,7 @@ cargo test
 ## 🏗️ **Current Project Structure**
 
 ```
-pleb-one/
+pleb-r1/
 ├── services/
 │   ├── relay-engine/              # Core Nostr relay (Rust)
 │   │   ├── src/
@@ -181,8 +181,8 @@ curl -X POST http://localhost:8080/api/auth/login \
 
 ```bash
 # Clone repository
-git clone https://github.com/PlebOne/pleb-one.git
-cd pleb-one
+git clone https://github.com/PlebOne/pleb-r1.git
+cd pleb-r1
 
 # Start development environment
 ./docker-manage.sh dev        # Linux/macOS
@@ -351,14 +351,14 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines.
 
 ## 🏛️ Governance
 
-Pleb.One is governed by its community through a democratic process:
+Pleb-R1 is governed by its community through a democratic process:
 
 - **Proposals**: Any community member can propose changes
 - **Discussion**: Open discussion period for feedback
 - **Voting**: Community members vote on proposals
 - **Implementation**: Approved proposals are implemented
 
-Join our governance discussions in [Discord](https://discord.gg/pleb-one) or [GitHub Discussions](https://github.com/pleb-one/pleb-one/discussions).
+Join our governance discussions in [Discord](https://discord.gg/pleb-r1) or [GitHub Discussions](https://github.com/PlebOne/pleb-r1/discussions).
 
 ## 💰 Pricing & Value
 
@@ -367,7 +367,7 @@ Join our governance discussions in [Discord](https://discord.gg/pleb-one) or [Gi
 #### Standard Tier - 3,500 sats/month
 - 30% less than nostr.land (5,000 sats)
 - High-performance Nostr relay infrastructure
-- @pleb.one NIP-05 identity included
+- @pleb-r1.com NIP-05 identity included
 - Community governance participation rights
 - Full access to open-source codebase
 - Basic analytics dashboard
@@ -394,10 +394,10 @@ Join our governance discussions in [Discord](https://discord.gg/pleb-one) or [Gi
 ## 🌐 Community
 
 ### Connect With Us
-- **Discord**: [discord.gg/pleb-one](https://discord.gg/pleb-one)
+- **Discord**: [discord.gg/pleb-r1](https://discord.gg/pleb-r1)
 - **Nostr**: `npub1pleb...` (coming soon)
-- **Twitter**: [@pleb_one](https://twitter.com/pleb_one)
-- **GitHub**: [github.com/pleb-one](https://github.com/pleb-one)
+- **Twitter**: [@pleb_r1](https://twitter.com/pleb_r1)
+- **GitHub**: [github.com/PlebOne/pleb-r1](https://github.com/PlebOne/pleb-r1)
 
 ### Community Calls
 - **Weekly Dev Calls**: Fridays 2PM UTC
@@ -413,16 +413,16 @@ Join our governance discussions in [Discord](https://discord.gg/pleb-one) or [Gi
 - **Community Size**: Building initial community
 
 ### Live Services
-- **Alpha Relay**: [relay.alpha.pleb.one](wss://relay.alpha.pleb.one) (coming soon)
-- **Dashboard**: [dashboard.pleb.one](https://dashboard.pleb.one) (coming soon)
-- **Documentation**: [docs.pleb.one](https://docs.pleb.one) (coming soon)
+- **Alpha Relay**: [relay.alpha.pleb-r1.com](wss://relay.alpha.pleb-r1.com) (coming soon)
+- **Dashboard**: [dashboard.pleb-r1.com](https://dashboard.pleb-r1.com) (coming soon)
+- **Documentation**: [docs.pleb-r1.com](https://docs.pleb-r1.com) (coming soon)
 
 ## 🔒 Security
 
 Security is paramount for community infrastructure:
 
 - **Regular Audits**: Code reviews and security assessments
-- **Responsible Disclosure**: [security@pleb.one](mailto:security@pleb.one)
+- **Responsible Disclosure**: [security@pleb-r1.com](mailto:security@pleb-r1.com)
 - **Bug Bounties**: Community-funded security research
 - **Open Source**: Transparent code for community review
 
@@ -441,8 +441,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**🧡 Built with ₿itcoin values by the Pleb.One community 🧡**
+**🧡 Built with ₿itcoin values by the Pleb-R1 community 🧡**
 
-[Get Started](./PROJECT_SETUP.md) | [Join Discord](https://discord.gg/pleb-one) | [Read Docs](./docs/) | [Contribute](./CONTRIBUTING.md)
+[Get Started](./PROJECT_SETUP.md) | [Join Discord](https://discord.gg/pleb-r1) | [Read Docs](./docs/) | [Contribute](./CONTRIBUTING.md)
 
 </div>

@@ -4,10 +4,10 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
-    container_name: pleb-one-postgres
+    container_name: pleb-r1-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: pleb_one
+      POSTGRES_DB: pleb_r1
       POSTGRES_USER: pleb_user
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pleb_secure_password}
     volumes:
@@ -18,7 +18,7 @@ services:
     networks:
       - pleb-one-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U pleb_user -d pleb_one"]
+      test: ["CMD-SHELL", "pg_isready -U pleb_user -d pleb_r1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -26,7 +26,7 @@ services:
   # Redis for caching and session storage
   redis:
     image: redis:7-alpine
-    container_name: pleb-one-redis
+    container_name: pleb-r1-redis
     restart: unless-stopped
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_secure_password}
     volumes:
@@ -34,7 +34,7 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - pleb-one-network
+      - pleb-r1-network
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
       interval: 30s
@@ -46,17 +46,17 @@ services:
     build:
       context: .
       dockerfile: services/relay-engine/Dockerfile
-    container_name: pleb-one-relay
+    container_name: pleb-r1-relay
     restart: unless-stopped
     environment:
       # Database configuration
-      DATABASE_URL: postgresql://pleb_user:${POSTGRES_PASSWORD:-pleb_secure_password}@postgres:5432/pleb_one
+      DATABASE_URL: postgresql://pleb_user:${POSTGRES_PASSWORD:-pleb_secure_password}@postgres:5432/pleb_r1
       
       # Relay configuration
-      RELAY_NAME: "Pleb.One Community Relay"
+      RELAY_NAME: "Pleb-R1 Community Relay"
       RELAY_DESCRIPTION: "A community-owned Nostr relay - Dockerized"
       RELAY_PUBKEY: ${RELAY_PUBKEY:-}
-      RELAY_CONTACT: ${RELAY_CONTACT:-admin@pleb.one}
+      RELAY_CONTACT: ${RELAY_CONTACT:-admin@pleb-r1.com}
       
       # Server configuration
       PORT: 8080
@@ -67,7 +67,7 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - pleb-one-network
+      - pleb-r1-network
     depends_on:
       postgres:
         condition: service_healthy
@@ -88,19 +88,19 @@ services:
     build:
       context: .
       dockerfile: services/relay-engine/Dockerfile
-    container_name: pleb-one-dev-server
+    container_name: pleb-r1-dev-server
     restart: unless-stopped
     command: ["./dev-server"]
     environment:
       DATABASE_URL: sqlite:/app/data/dev.db
       PORT: 8080
       RUST_LOG: ${RUST_LOG:-info}
-      RELAY_NAME: "Pleb.One Development Server"
+      RELAY_NAME: "Pleb-R1 Development Server"
       RELAY_DESCRIPTION: "Development authentication server"
     ports:
       - "8081:8080"
     networks:
-      - pleb-one-network
+      - pleb-r1-network
     volumes:
       - dev_data:/app/data
     profiles:
@@ -116,13 +116,13 @@ services:
     build:
       context: services/community-web
       dockerfile: Dockerfile
-    container_name: pleb-one-web
+    container_name: pleb-r1-web
     restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
     networks:
-      - pleb-one-network
+      - pleb-r1-network
     depends_on:
       - relay-engine
     environment:
@@ -136,7 +136,7 @@ services:
   # Prometheus for metrics collection
   prometheus:
     image: prom/prometheus:latest
-    container_name: pleb-one-prometheus
+    container_name: pleb-r1-prometheus
     restart: unless-stopped
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -151,14 +151,14 @@ services:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     networks:
-      - pleb-one-network
+      - pleb-r1-network
     profiles:
       - monitoring
 
   # Grafana for metrics visualization
   grafana:
     image: grafana/grafana:latest
-    container_name: pleb-one-grafana
+    container_name: pleb-r1-grafana
     restart: unless-stopped
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
@@ -170,7 +170,7 @@ services:
       - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
       - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
     networks:
-      - pleb-one-network
+      - pleb-r1-network
     depends_on:
       - prometheus
     profiles:
@@ -195,7 +195,7 @@ volumes:
 
 # Networks
 networks:
-  pleb-one-network:
+  pleb-r1-network:
     driver: bridge
     ipam:
       config:

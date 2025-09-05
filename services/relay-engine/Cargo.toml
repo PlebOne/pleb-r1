@@ -2,7 +2,7 @@
 name = "relay-engine"
 version = "0.1.0"
 edition = "2021"
-description = "High-performance Nostr relay engine for Pleb.One using rust-nostr"
+description = "High-performance Nostr relay engine for Pleb-R1 using rust-nostr"
 
 [[bin]]
 name = "relay-engine"
