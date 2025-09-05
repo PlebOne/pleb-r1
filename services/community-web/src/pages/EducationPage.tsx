@@ -3,90 +3,141 @@ import { Book, Code, Play, ExternalLink, Download, Terminal } from 'lucide-react
 export function EducationPage() {
   const tutorials = [
     {
-      title: "What is Nostr?",
-      description: "Learn the basics of the Nostr protocol and why it matters for decentralized communication.",
-      level: "Beginner",
+      title: "WTF is Nostr? (For Normies)",
+      description: "A no-BS explanation of why Nostr exists and why Big Tech hates it. Spoiler: They can't control it.",
+      level: "Pleb",
       duration: "10 min read",
       icon: Book,
-      tags: ["Protocol", "Basics"],
+      tags: ["Protocol", "Awakening"],
     },
     {
-      title: "Setting Up Your First Nostr Client",
-      description: "Step-by-step guide to connect to Nostr relays and start publishing events.",
-      level: "Beginner", 
+      title: "Escape the Cage: Your First Nostr Client",
+      description: "Break free from Zuck's surveillance empire. Step-by-step guide to sovereign communication.",
+      level: "Pleb", 
       duration: "15 min",
       icon: Play,
-      tags: ["Client", "Setup"],
+      tags: ["Freedom", "Setup"],
     },
     {
-      title: "Self-Hosting a Nostr Relay",
-      description: "Deploy your own Pleb.One relay instance using Docker and contribute to the network.",
-      level: "Intermediate",
+      title: "Become a Chad: Self-Host Your Relay",
+      description: "Don't just use the network, BE the network. Deploy your own Pleb-R1 relay and join the rebellion.",
+      level: "Chad",
       duration: "30 min",
       icon: Terminal,
-      tags: ["Self-hosting", "Docker"],
+      tags: ["Self-hosting", "Rebellion"],
     },
     {
-      title: "Understanding NIPs",
-      description: "Dive deep into Nostr Implementation Possibilities and how they extend the protocol.",
-      level: "Advanced",
+      title: "NIPs Deep Dive: The Pleb Protocols",
+      description: "Understanding Nostr Implementation Possibilities. From basic events to zaps and everything in between.",
+      level: "Gigachad",
       duration: "20 min read",
       icon: Code,
       tags: ["NIPs", "Development"],
     },
     {
-      title: "Lightning Integration",
-      description: "Learn how to integrate Lightning Network payments with your Nostr applications.",
-      level: "Advanced",
+      title: "Orange Pill Lightning Integration",
+      description: "Stack sats while you relay. Integrate Lightning payments and watch fiat minds explode.",
+      level: "Gigachad",
       duration: "45 min",
       icon: ExternalLink,
-      tags: ["Lightning", "Payments"],
+      tags: ["Lightning", "Bitcoin"],
     },
     {
-      title: "Contributing to Pleb.One",
-      description: "How to contribute to the open source Pleb.One relay and community tools.",
-      level: "Intermediate",
+      title: "Join the Pleb Army: Contributing",
+      description: "Help build the future of free speech. Contribute to Pleb-R1 and stick it to the censors.",
+      level: "Chad",
       duration: "25 min",
       icon: Download,
-      tags: ["Open Source", "Contributing"],
+      tags: ["Open Source", "Revolution"],
+    },
+    {
+      title: "Database Pilled: PostgreSQL Mastery",
+      description: "Scale your relay like a pro. Advanced database optimization for handling millions of plebs.",
+      level: "Gigachad",
+      duration: "60 min",
+      icon: Terminal,
+      tags: ["Database", "Performance"],
+    },
+    {
+      title: "Fiat Destroyer: Monetization Strategies",
+      description: "Turn your relay into a Bitcoin machine. Paid relays, premium features, and pleb economics.",
+      level: "Chad",
+      duration: "35 min",
+      icon: ExternalLink,
+      tags: ["Business", "Bitcoin"],
+    },
+    {
+      title: "Opsec for Paranoid Plebs",
+      description: "Protect yourself from glowies. Security, privacy, and operational security for relay operators.",
+      level: "Gigachad",
+      duration: "40 min",
+      icon: Book,
+      tags: ["Security", "Privacy"],
+    },
+    {
+      title: "Tor & I2P Integration",
+      description: "Run your relay through anonymity networks. Because surveillance is cringe.",
+      level: "Gigachad", 
+      duration: "50 min",
+      icon: Terminal,
+      tags: ["Privacy", "Tor"],
+    },
+    {
+      title: "Backup & Disaster Recovery",
+      description: "Never lose a pleb's data. Comprehensive backup strategies for relay operators.",
+      level: "Chad",
+      duration: "30 min",
+      icon: Download,
+      tags: ["Backup", "Operations"],
+    },
+    {
+      title: "Monitoring & Alerting Setup",
+      description: "Watch your relay like a hawk. Prometheus, Grafana, and custom alerting for based operators.",
+      level: "Chad",
+      duration: "45 min", 
+      icon: Code,
+      tags: ["Monitoring", "DevOps"],
     },
   ]
 
   const quickStart = {
-    connect: `// Connect to Pleb.One relay
-const relay = relayInit('wss://relay.pleb.one')
+    connect: `// Escape Big Tech surveillance - Connect to Pleb-R1!
+const relay = relayInit('wss://relay.pleb-r1.com')
 relay.on('connect', () => {
-  console.log('Connected to Pleb.One!')
+  console.log('🎯 Connected to the rebellion!')
+  console.log('Zuck in shambles 📉')
 })
 await relay.connect()`,
     
-    publish: `// Publish an event
+    publish: `// Speak freely without algorithm manipulation
 const event = {
   kind: 1,
   created_at: Math.floor(Date.now() / 1000),
-  tags: [],
-  content: 'Hello from Pleb.One!',
+  tags: [['r', 'pleb-r1.com']], // Support the rebellion!
+  content: 'GM plebs! Just escaped the Twitter gulag 🚁',
 }
 const signedEvent = await window.nostr.signEvent(event)
-relay.publish(signedEvent)`,
+relay.publish(signedEvent) // No shadow banning here!`,
     
-    subscribe: `// Subscribe to events
+    subscribe: `// Actually see ALL messages (revolutionary concept!)
 const sub = relay.sub([
   {
-    kinds: [1],
-    limit: 10
+    kinds: [1], // Text notes
+    '#r': ['pleb-r1.com'], // Our based community
+    limit: 50
   }
 ])
 sub.on('event', (event) => {
-  console.log('Received event:', event)
+  console.log('Uncensored truth:', event.content)
+  // No "community guidelines" violations here 😎
 })`
   }
 
   const getLevelColor = (level: string) => {
     switch (level) {
-      case 'Beginner': return 'badge-green'
-      case 'Intermediate': return 'badge-yellow'
-      case 'Advanced': return 'badge-red'
+      case 'Pleb': return 'badge-green'
+      case 'Chad': return 'badge-yellow'
+      case 'Gigachad': return 'badge-red'
       default: return 'badge-gray'
     }
   }
@@ -95,31 +146,31 @@ sub.on('event', (event) => {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900">Educational Hub</h1>
+        <h1 className="text-4xl font-bold text-gray-900">🎓 Pleb University</h1>
         <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-          Learn Nostr, Bitcoin, and self-sovereign technology. From basics to advanced topics,
-          all open source and community-driven.
+          Learn to escape Big Tech tyranny. Master Nostr, Bitcoin, and self-sovereignty. 
+          Because freedom isn't free, but these tutorials are! 😎
         </p>
       </div>
 
       {/* Quick Start Section */}
       <div className="card">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Start Code Examples</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">⚡ Quick Start: Join the Rebellion</h2>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">1. Connect to Relay</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">1. 🏃‍♂️ Escape the Matrix</h3>
             <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg text-sm overflow-x-auto">
               <code>{quickStart.connect}</code>
             </pre>
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">2. Publish Event</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">2. 🚀 Launch Your Voice</h3>
             <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg text-sm overflow-x-auto">
               <code>{quickStart.publish}</code>
             </pre>
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">3. Subscribe to Events</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">3. 👂 Hear the Truth</h3>
             <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg text-sm overflow-x-auto">
               <code>{quickStart.subscribe}</code>
             </pre>
@@ -168,31 +219,37 @@ sub.on('event', (event) => {
         <div className="card">
           <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
             <Book className="h-5 w-5 mr-2" />
-            Essential Resources
+            Essential Pleb Resources
           </h3>
           <ul className="space-y-3">
             <li>
               <a href="https://github.com/nostr-protocol/nostr" className="flex items-center text-pleb-600 hover:text-pleb-700">
                 <ExternalLink className="h-4 w-4 mr-2" />
-                Official Nostr Protocol Specification
+                Official Nostr Protocol (The Sacred Texts)
               </a>
             </li>
             <li>
               <a href="https://github.com/aljazceru/awesome-nostr" className="flex items-center text-pleb-600 hover:text-pleb-700">
                 <ExternalLink className="h-4 w-4 mr-2" />
-                Awesome Nostr - Curated Resources
+                Awesome Nostr - Curated Freedom Tools
               </a>
             </li>
             <li>
-              <a href="https://nostr.com" className="flex items-center text-pleb-600 hover:text-pleb-700">
+              <a href="https://nostrgraph.com" className="flex items-center text-pleb-600 hover:text-pleb-700">
                 <ExternalLink className="h-4 w-4 mr-2" />
-                Nostr.com - Directory of Clients & Relays
+                Nostr Network Visualizer (See the Web of Freedom)
               </a>
             </li>
             <li>
               <a href="#" className="flex items-center text-pleb-600 hover:text-pleb-700">
                 <Download className="h-4 w-4 mr-2" />
-                Pleb.One Docker Compose Setup
+                Pleb-R1 Docker Stack (One-Click Freedom)
+              </a>
+            </li>
+            <li>
+              <a href="https://21ideas.org" className="flex items-center text-pleb-600 hover:text-pleb-700">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                21 Ideas - Bitcoin Education for Plebs
               </a>
             </li>
           </ul>
@@ -201,31 +258,37 @@ sub.on('event', (event) => {
         <div className="card">
           <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
             <Code className="h-5 w-5 mr-2" />
-            Development Tools
+            Chad Developer Arsenal
           </h3>
           <ul className="space-y-3">
             <li>
               <a href="https://github.com/nbd-wtf/nostr-tools" className="flex items-center text-pleb-600 hover:text-pleb-700">
                 <ExternalLink className="h-4 w-4 mr-2" />
-                nostr-tools - JavaScript Library
+                nostr-tools - JavaScript Library (Based AF)
               </a>
             </li>
             <li>
               <a href="https://github.com/rust-nostr/nostr" className="flex items-center text-pleb-600 hover:text-pleb-700">
                 <ExternalLink className="h-4 w-4 mr-2" />
-                rust-nostr - Rust Implementation
+                rust-nostr - Rust Implementation (Memory Safe Rebellion)
               </a>
             </li>
             <li>
               <a href="https://websocketking.com" className="flex items-center text-pleb-600 hover:text-pleb-700">
                 <ExternalLink className="h-4 w-4 mr-2" />
-                WebSocket Testing Tool
+                WebSocket Testing Tool (Debug Like a Pro)
               </a>
             </li>
             <li>
               <a href="#" className="flex items-center text-pleb-600 hover:text-pleb-700">
                 <Terminal className="h-4 w-4 mr-2" />
-                Pleb.One CLI Tools
+                Pleb-R1 CLI Tools (Command Line Chad Mode)
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/lnbits/lnbits" className="flex items-center text-pleb-600 hover:text-pleb-700">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                LNbits - Lightning Wallet Stack (Orange Pill Everything)
               </a>
             </li>
           </ul>
@@ -235,17 +298,20 @@ sub.on('event', (event) => {
       {/* Community Section */}
       <div className="card bg-gradient-to-r from-pleb-600 to-pleb-700 text-white">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Join the Learning Community</h2>
+          <h2 className="text-2xl font-bold mb-4">🤝 Join the Pleb Resistance</h2>
           <p className="text-pleb-100 mb-6 max-w-2xl mx-auto">
-            Connect with other plebs learning Nostr and Bitcoin. Share knowledge, 
-            ask questions, and build together.
+            Connect with based plebs building the future of free speech. No safe spaces, 
+            just raw truth and revolutionary technology. Stack sats, learn Nostr, resist tyranny.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="#" className="bg-white text-pleb-700 hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-colors">
-              Join Discord
+              🚁 Join Telegram
             </a>
             <a href="#" className="border border-white text-white hover:bg-white hover:text-pleb-700 font-medium py-3 px-6 rounded-lg transition-colors">
-              Follow on Nostr
+              🤙 Follow on Nostr
+            </a>
+            <a href="#" className="border border-white text-white hover:bg-white hover:text-pleb-700 font-medium py-3 px-6 rounded-lg transition-colors">
+              📢 Matrix Chat
             </a>
           </div>
         </div>

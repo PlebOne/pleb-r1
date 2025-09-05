@@ -80,96 +80,126 @@ export function Layout({ children }: LayoutProps) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                Community
+                🤝 Pleb Army
               </h3>
               <ul className="mt-4 space-y-4">
                 <li>
                   <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                    Discord
+                    🚁 Telegram (No Censorship)
                   </a>
                 </li>
                 <li>
                   <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                    Telegram
+                    🤙 Nostr (Obviously)
                   </a>
                 </li>
                 <li>
                   <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                    Nostr
+                    📢 Matrix (For the Paranoid)
                   </a>
                 </li>
               </ul>
             </div>
             <div>
               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                Resources
+                🛠️ Freedom Tech
               </h3>
               <ul className="mt-4 space-y-4">
                 <li>
                   <Link to="/education" className="text-base text-gray-500 hover:text-gray-900">
-                    Documentation
+                    📚 Pleb University
                   </Link>
                 </li>
                 <li>
                   <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                    API Reference
+                    🔧 API Docs (For Chads)
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                    Guides
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                Open Source
-              </h3>
-              <ul className="mt-4 space-y-4">
-                <li>
-                  <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                    GitHub
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                    Contributing
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                    License
+                  <a href="https://pleb.one" className="text-base text-gray-500 hover:text-gray-900">
+                    🌐 The Mothership
                   </a>
                 </li>
               </ul>
             </div>
             <div>
               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                Support
+                🏴‍☠️ Open Source Rebellion
+              </h3>
+              <ul className="mt-4 space-y-4">
+                <li>
+                  <a href="https://github.com/PlebOne/pleb-r1" className="text-base text-gray-500 hover:text-gray-900">
+                    🐙 GitHub (Star Us!)
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-base text-gray-500 hover:text-gray-900">
+                    🚀 Contributing (Join the Fight)
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-base text-gray-500 hover:text-gray-900">
+                    ⚖️ License (MIT = Freedom)
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                💰 Support the Cause
               </h3>
               <ul className="mt-4 space-y-4">
                 <li>
                   <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                    Help Center
+                    ⚡ Zap Us Sats
                   </a>
                 </li>
                 <li>
                   <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                    Status
+                    📊 Relay Status
                   </a>
                 </li>
                 <li>
                   <a href="#" className="text-base text-gray-500 hover:text-gray-900">
-                    Contact
+                    📞 Contact (No Karens)
                   </a>
                 </li>
               </ul>
             </div>
           </div>
-          <div className="mt-8 border-t border-gray-200 pt-8">
-            <p className="text-base text-gray-400 text-center">
-              © 2025 Pleb.One. By plebs, for plebs. Open source and community-owned.
+          
+          {/* Built by section */}
+          <div className="mt-8 border-t border-gray-200 pt-6">
+            <div className="text-center">
+              <p className="text-base text-gray-600 mb-2">
+                🚀 <strong>Built by Freedom Tech Rebels</strong>
+              </p>
+              <p className="text-sm text-gray-500 mb-4">
+                Pleb-R1 is crafted with love, caffeine, and a healthy disdain for Big Tech 
+                censorship by the mad scientists at <a href="https://pleb.one" className="text-pleb-600 hover:text-pleb-700">pleb.one</a> 🧪
+              </p>
+              <p className="text-xs text-gray-400 italic mb-4">
+                "Why use one relay when you can help destroy the surveillance state?" - Ancient Pleb Wisdom
+              </p>
+            </div>
+          </div>
+
+          {/* Copyright and links */}
+          <div className="border-t border-gray-200 pt-6">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <p className="text-base text-gray-400 mb-4 md:mb-0">
+                © 2025 <a href="https://pleb.one" className="text-pleb-600 hover:text-pleb-700">pleb.one</a> - Because freedom isn't free, but our software is 🏴‍☠️
+              </p>
+              <div className="flex space-x-6 text-sm">
+                <a href="https://github.com/PlebOne" className="text-gray-400 hover:text-gray-500">🐙 GitHub</a>
+                <a href="https://pleb.one" className="text-gray-400 hover:text-gray-500">🌐 Website</a>
+                <a href="#" className="text-gray-400 hover:text-gray-500">📚 Help</a>
+                <a href="#" className="text-gray-400 hover:text-gray-500">⚖️ Legal Mumbo Jumbo</a>
+              </div>
+            </div>
+            <p className="text-center text-xs text-gray-400 mt-4">
+              Made with ❤️, ☕, and a sprinkle of anarchist pixie dust ✨<br/>
+              <em>"Side effects may include: sovereignty, privacy, and the urge to orange-pill friends" 🟠</em>
             </p>
           </div>
         </div>
