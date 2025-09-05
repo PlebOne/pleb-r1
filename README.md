@@ -10,10 +10,30 @@ A high-performance, community-owned Nostr relay implementation built with Rust, 
 
 ## 🎯 **Quick Start (Ready Now!)**
 
-### Option 1: Development Server with Authentication
+### Option 1: Docker Deployment (Recommended) 🐳
+```bash
+# Development environment
+./docker-manage.sh dev
+# Or on Windows:
+./docker-manage.ps1 dev
+
+# Production environment
+cp .env.docker .env
+# Edit .env with your configuration
+./docker-manage.sh prod
+```
+
+**What you get:**
+- 🚀 Complete stack in minutes
+- 🔄 Automatic service orchestration
+- 📊 Built-in monitoring (optional)
+- 🛡️ Production-ready security
+- 📈 Easy scaling and updates
+
+### Option 2: Development Server with Authentication
 ```powershell
 # 1. Clone and navigate
-git clone https://github.com/pleb-one/pleb-one.git
+git clone https://github.com/PlebOne/pleb-one.git
 cd pleb-one/services/relay-engine
 
 # 2. Start the authentication development server
@@ -24,7 +44,7 @@ cargo run --bin dev-server
 # Open services/community-web/landing.html in your browser
 ```
 
-### Option 2: Production Relay (SQLite)
+### Option 3: Production Relay (Native)
 ```powershell
 # 1. Set up SQLite database
 touch services/relay-engine/data/relay.db
@@ -32,15 +52,6 @@ touch services/relay-engine/data/relay.db
 # 2. Run the production relay
 cd services/relay-engine
 cargo run --bin relay-engine
-```
-
-### Option 3: Production with PostgreSQL
-```powershell
-# 1. Set up PostgreSQL database
-$env:DATABASE_URL="postgresql://user:pass@localhost/relay"
-
-# 2. Run the relay
-cargo run --release
 ```
 
 ## ✨ **Current Implementation Status**
@@ -73,7 +84,10 @@ cargo run --release
 - ✅ **Configuration Management** - Environment-based config
 - ✅ **Error Handling** - Comprehensive error management
 - ✅ **CORS Support** - Frontend development enabled
-- 🔄 **Docker Support** - Container setup pending
+- ✅ **Docker Support** - Complete containerization with orchestration
+- ✅ **Multi-stage Builds** - Optimized production images
+- ✅ **Health Checks** - Service monitoring and auto-recovery
+- ✅ **SSL/TLS Ready** - Production security configuration
 - 🔄 **Email Verification** - User verification system planned
 - ✅ **Docker Support** - Complete containerization setup
 - ✅ **Configuration Management** - Environment-based config
@@ -160,6 +174,48 @@ curl -X POST http://localhost:8080/api/auth/login \
     "password": "user_password"
   }'
 ```
+
+## 🐳 **Docker Deployment**
+
+### Quick Docker Start
+
+```bash
+# Clone repository
+git clone https://github.com/PlebOne/pleb-one.git
+cd pleb-one
+
+# Start development environment
+./docker-manage.sh dev        # Linux/macOS
+./docker-manage.ps1 dev       # Windows
+
+# Or production environment
+cp .env.docker .env
+# Edit .env with your settings
+./docker-manage.sh prod
+```
+
+### Docker Services
+
+| Service | Purpose | Port | URL |
+|---------|---------|------|-----|
+| **relay-engine** | Main Nostr relay | 8080 | `ws://localhost:8080` |
+| **community-web** | Frontend & landing page | 80 | `http://localhost` |
+| **postgres** | Production database | 5432 | Internal |
+| **redis** | Caching & sessions | 6379 | Internal |
+| **prometheus** | Metrics collection | 9090 | `http://localhost:9090` |
+| **grafana** | Monitoring dashboard | 3000 | `http://localhost:3000` |
+
+### Docker Features
+
+- 🚀 **One-command deployment** - Everything starts together
+- 🔄 **Auto-restart** - Services recover from failures
+- 📊 **Built-in monitoring** - Prometheus + Grafana stack
+- 🛡️ **Security hardened** - Non-root containers, network isolation
+- 📈 **Scalable** - Easy horizontal scaling
+- 💾 **Data persistence** - Volumes for databases and logs
+- 🔧 **Development mode** - Fast iteration with hot reloading
+
+**Full Docker documentation:** [DOCKER.md](DOCKER.md)
 
 ## 🚀 Vision
 

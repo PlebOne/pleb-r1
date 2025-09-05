@@ -1,0 +1,47 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Pleb.One Relay Engine
+  - job_name: 'pleb-one-relay'
+    static_configs:
+      - targets: ['relay-engine:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+
+  # Development server (when running)
+  - job_name: 'pleb-one-dev'
+    static_configs:
+      - targets: ['dev-server:8080']
+    metrics_path: '/api/metrics/all'
+    scrape_interval: 15s
+    scrape_timeout: 5s
+
+  # Node exporter for system metrics (optional)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 15s
+
+  # PostgreSQL exporter (optional)
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 15s
+
+  # Redis exporter (optional)
+  - job_name: 'redis-exporter'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    scrape_interval: 15s

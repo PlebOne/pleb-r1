@@ -1,0 +1,202 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: pleb-one-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pleb_one
+      POSTGRES_USER: pleb_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pleb_secure_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - pleb-one-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pleb_user -d pleb_one"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Redis for caching and session storage
+  redis:
+    image: redis:7-alpine
+    container_name: pleb-one-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_secure_password}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - pleb-one-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Main Nostr Relay Engine
+  relay-engine:
+    build:
+      context: .
+      dockerfile: services/relay-engine/Dockerfile
+    container_name: pleb-one-relay
+    restart: unless-stopped
+    environment:
+      # Database configuration
+      DATABASE_URL: postgresql://pleb_user:${POSTGRES_PASSWORD:-pleb_secure_password}@postgres:5432/pleb_one
+      
+      # Relay configuration
+      RELAY_NAME: "Pleb.One Community Relay"
+      RELAY_DESCRIPTION: "A community-owned Nostr relay - Dockerized"
+      RELAY_PUBKEY: ${RELAY_PUBKEY:-}
+      RELAY_CONTACT: ${RELAY_CONTACT:-admin@pleb.one}
+      
+      # Server configuration
+      PORT: 8080
+      RUST_LOG: ${RUST_LOG:-info}
+      
+      # Redis configuration
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_secure_password}@redis:6379
+    ports:
+      - "8080:8080"
+    networks:
+      - pleb-one-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - relay_data:/app/data
+      - relay_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Development Authentication Server (optional)
+  dev-server:
+    build:
+      context: .
+      dockerfile: services/relay-engine/Dockerfile
+    container_name: pleb-one-dev-server
+    restart: unless-stopped
+    command: ["./dev-server"]
+    environment:
+      DATABASE_URL: sqlite:/app/data/dev.db
+      PORT: 8080
+      RUST_LOG: ${RUST_LOG:-info}
+      RELAY_NAME: "Pleb.One Development Server"
+      RELAY_DESCRIPTION: "Development authentication server"
+    ports:
+      - "8081:8080"
+    networks:
+      - pleb-one-network
+    volumes:
+      - dev_data:/app/data
+    profiles:
+      - development
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/metrics/all"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend Web Application
+  community-web:
+    build:
+      context: services/community-web
+      dockerfile: Dockerfile
+    container_name: pleb-one-web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - pleb-one-network
+    depends_on:
+      - relay-engine
+    environment:
+      - BACKEND_URL=http://relay-engine:8080
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: pleb-one-prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - pleb-one-network
+    profiles:
+      - monitoring
+
+  # Grafana for metrics visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: pleb-one-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: false
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - pleb-one-network
+    depends_on:
+      - prometheus
+    profiles:
+      - monitoring
+
+# Volumes for persistent data
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  relay_data:
+    driver: local
+  relay_logs:
+    driver: local
+  dev_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+# Networks
+networks:
+  pleb-one-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

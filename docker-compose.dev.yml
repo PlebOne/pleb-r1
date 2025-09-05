@@ -1,0 +1,69 @@
+version: '3.8'
+
+# Development-focused Docker Compose configuration
+# Use this for local development with faster builds and debugging
+
+services:
+  # SQLite-based development relay
+  dev-relay:
+    build:
+      context: .
+      dockerfile: services/relay-engine/Dockerfile
+      target: builder  # Stop at builder stage for development
+    container_name: pleb-one-dev-relay
+    restart: unless-stopped
+    command: ["./dev-server"]
+    environment:
+      DATABASE_URL: sqlite:/app/data/dev.db
+      PORT: 8080
+      RUST_LOG: debug
+      RELAY_NAME: "Pleb.One Development Relay"
+      RELAY_DESCRIPTION: "Development server with authentication API"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./services/relay-engine:/usr/src/app/services/relay-engine
+      - dev_data:/app/data
+      - dev_logs:/app/logs
+    networks:
+      - dev-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/metrics/all"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Simple frontend serving
+  dev-web:
+    image: nginx:alpine
+    container_name: pleb-one-dev-web
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    volumes:
+      - ./services/community-web:/usr/share/nginx/html:ro
+      - ./services/community-web/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - dev-network
+    depends_on:
+      - dev-relay
+
+  # Development database (SQLite via volume mount)
+  dev-db-viewer:
+    image: adminer
+    container_name: pleb-one-db-viewer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    networks:
+      - dev-network
+    profiles:
+      - db-tools
+
+volumes:
+  dev_data:
+  dev_logs:
+
+networks:
+  dev-network:
+    driver: bridge

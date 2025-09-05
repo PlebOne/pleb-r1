@@ -63,6 +63,22 @@ coverage/
 # Docker
 .dockerignore
 docker-compose.override.yml
+.env
+.env.local
+.env.production
+
+# Docker volumes and data
+postgres_data/
+redis_data/
+relay_data/
+relay_logs/
+dev_data/
+prometheus_data/
+grafana_data/
+
+# SSL certificates
+certs/
+ssl/
 
 # Backup files
 *.bak
