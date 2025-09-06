@@ -257,7 +257,20 @@ impl EventHandler {
             }
             
             // Parameterized replaceable events (kinds 30000-39999)
-            30000..=39999 => Ok(true),
+            30000..=39999 => {
+                match event.kind {
+                    // NIP-23: Long-form Content
+                    30023 => {
+                        if !self.validate_long_form_content(event).await? {
+                            warn!("📝 Long-form content validation failed for event: {}", event.id);
+                            return Ok(false);
+                        }
+                        Ok(true)
+                    }
+                    // Other parameterized replaceable events
+                    _ => Ok(true)
+                }
+            }
             
             // Other kinds - allow for now but log
             _ => {
@@ -296,6 +309,95 @@ impl EventHandler {
             events_today,
             rate_limited_clients: self.rate_limiter.get_rate_limited_count().await,
         })
+    }
+
+    /// Validates NIP-23 long-form content events (kind 30023)
+    async fn validate_long_form_content(&self, event: &Event) -> Result<bool> {
+        // Content size validation (allow up to 500KB for long-form content)
+        if event.content.len() > 500_000 {
+            warn!("📝 Long-form content too large ({} bytes) for event: {}", 
+                  event.content.len(), event.id);
+            return Ok(false);
+        }
+
+        // Require minimum content length for long-form content
+        if event.content.len() < 100 {
+            warn!("📝 Long-form content too short ({} bytes) for event: {}", 
+                  event.content.len(), event.id);
+            return Ok(false);
+        }
+
+        // Validate required tags for NIP-23
+        let mut has_d_tag = false;
+        let mut has_title = false;
+        
+        for tag in &event.tags {
+            if tag.is_empty() {
+                continue;
+            }
+            
+            match tag[0].as_str() {
+                // "d" tag is required for parameterized replaceable events
+                "d" => {
+                    if tag.len() >= 2 && !tag[1].is_empty() {
+                        has_d_tag = true;
+                        // Validate d-tag identifier (should be reasonable length)
+                        if tag[1].len() > 256 {
+                            warn!("📝 d-tag identifier too long for event: {}", event.id);
+                            return Ok(false);
+                        }
+                    }
+                }
+                // "title" tag is recommended for long-form content
+                "title" => {
+                    if tag.len() >= 2 && !tag[1].is_empty() {
+                        has_title = true;
+                        // Validate title length
+                        if tag[1].len() > 500 {
+                            warn!("📝 Title too long for event: {}", event.id);
+                            return Ok(false);
+                        }
+                    }
+                }
+                // "summary" tag validation if present
+                "summary" => {
+                    if tag.len() >= 2 && tag[1].len() > 1000 {
+                        warn!("📝 Summary too long for event: {}", event.id);
+                        return Ok(false);
+                    }
+                }
+                // "published_at" tag validation if present
+                "published_at" => {
+                    if tag.len() >= 2 {
+                        if let Err(_) = tag[1].parse::<i64>() {
+                            warn!("📝 Invalid published_at timestamp for event: {}", event.id);
+                            return Ok(false);
+                        }
+                    }
+                }
+                _ => {} // Allow other tags
+            }
+        }
+
+        // Require d-tag for parameterized replaceable events
+        if !has_d_tag {
+            warn!("📝 Missing required d-tag for long-form content event: {}", event.id);
+            return Ok(false);
+        }
+
+        // Warn if no title (not required but recommended)
+        if !has_title {
+            debug!("📝 Long-form content missing title tag: {}", event.id);
+        }
+
+        // Basic content validation
+        if ContentFilter::contains_spam_indicators(&event.content) {
+            warn!("🚫 Long-form content contains spam indicators: {}", event.id);
+            return Ok(false);
+        }
+
+        info!("✅ Long-form content validation passed for event: {}", event.id);
+        Ok(true)
     }
 }
 

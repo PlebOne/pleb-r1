@@ -2,13 +2,15 @@ import { useQuery } from '@tanstack/react-query'
 import { Activity, Database, Users, Zap, Clock, TrendingUp } from 'lucide-react'
 
 interface RelayMetrics {
-  connections_active: number
-  connections_total: number
+  active_connections: number
+  total_connections: number
   events_stored_total: number
-  events_processing_duration_avg: number
-  queries_total: number
+  event_processing_seconds_sum: number
+  event_processing_seconds_count: number
+  queries_received_total: number
   database_operations_total: number
-  uptime_seconds: number
+  active_subscriptions: number
+  events_received_total: number
 }
 
 async function fetchRelayMetrics(): Promise<RelayMetrics> {
@@ -70,13 +72,6 @@ export function DashboardPage() {
     )
   }
 
-  const formatUptime = (seconds: number) => {
-    const days = Math.floor(seconds / 86400)
-    const hours = Math.floor((seconds % 86400) / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
-    return `${days}d ${hours}h ${minutes}m`
-  }
-
   const formatNumber = (num: number) => {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M'
     if (num >= 1000) return (num / 1000).toFixed(1) + 'K'
@@ -104,7 +99,7 @@ export function DashboardPage() {
               <p className="text-sm font-medium text-gray-600">Relay Status</p>
               <p className="text-2xl font-bold text-green-600">Online</p>
               <p className="text-xs text-gray-500">
-                Uptime: {metrics ? formatUptime(metrics.uptime_seconds) : '0m'}
+                Subscriptions: {metrics ? formatNumber(metrics.active_subscriptions) : '0'}
               </p>
             </div>
           </div>
@@ -118,10 +113,10 @@ export function DashboardPage() {
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Active Connections</p>
               <p className="text-2xl font-bold text-gray-900">
-                {metrics ? formatNumber(metrics.connections_active) : '0'}
+                {metrics ? formatNumber(metrics.active_connections) : '0'}
               </p>
               <p className="text-xs text-gray-500">
-                Total: {metrics ? formatNumber(metrics.connections_total) : '0'}
+                Total: {metrics ? formatNumber(metrics.total_connections) : '0'}
               </p>
             </div>
           </div>
@@ -138,7 +133,7 @@ export function DashboardPage() {
                 {metrics ? formatNumber(metrics.events_stored_total) : '0'}
               </p>
               <p className="text-xs text-gray-500">
-                Avg processing: {metrics ? (metrics.events_processing_duration_avg * 1000).toFixed(1) : '0'}ms
+                Events received: {metrics ? formatNumber(metrics.events_received_total) : '0'}
               </p>
             </div>
           </div>
@@ -156,19 +151,33 @@ export function DashboardPage() {
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">Total Queries</span>
               <span className="text-lg font-semibold">
-                {metrics ? formatNumber(metrics.queries_total) : '0'}
+                {metrics ? formatNumber(metrics.queries_received_total) : '0'}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Average Response Time</span>
+              <span className="text-sm text-gray-600">Average Processing Time</span>
               <span className="text-lg font-semibold">
-                {metrics ? '< 100ms' : 'N/A'}
+                {metrics && metrics.event_processing_seconds_count > 0 
+                  ? `${(metrics.event_processing_seconds_sum / metrics.event_processing_seconds_count * 1000).toFixed(1)}ms`
+                  : 'N/A'
+                }
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-green-500 h-2 rounded-full" style={{ width: '95%' }}></div>
-            </div>
-            <p className="text-xs text-gray-500">95% of queries under 100ms</p>
+            {metrics && metrics.queries_received_total > 0 && (
+              <>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-green-500 h-2 rounded-full" 
+                    style={{ 
+                      width: '100%'
+                    }}
+                  ></div>
+                </div>
+                <p className="text-xs text-gray-500">
+                  {formatNumber(metrics.queries_received_total)} queries processed
+                </p>
+              </>
+            )}
           </div>
         </div>
 
@@ -186,12 +195,25 @@ export function DashboardPage() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">Connection Pool</span>
-              <span className="text-lg font-semibold text-green-600">Healthy</span>
+              <span className="text-lg font-semibold text-green-600">
+                {metrics && metrics.active_connections > 0 ? 'Active' : 'Idle'}
+              </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-pleb-500 h-2 rounded-full" style={{ width: '88%' }}></div>
-            </div>
-            <p className="text-xs text-gray-500">Pool utilization: 88%</p>
+            {metrics && metrics.total_connections > 0 && (
+              <>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-pleb-500 h-2 rounded-full" 
+                    style={{ 
+                      width: `${Math.min(100, (metrics.active_connections / Math.max(metrics.total_connections, 1)) * 100)}%` 
+                    }}
+                  ></div>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Active connections: {metrics.active_connections} / {metrics.total_connections}
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -206,13 +228,13 @@ export function DashboardPage() {
           <div>
             <h4 className="text-sm font-medium text-gray-900 mb-2">WebSocket Endpoint</h4>
             <p className="text-sm text-gray-600 font-mono bg-gray-50 p-2 rounded">
-              wss://relay.pleb.one
+              wss://r1.pleb.one/ws
             </p>
           </div>
           <div>
             <h4 className="text-sm font-medium text-gray-900 mb-2">Supported NIPs</h4>
             <div className="flex flex-wrap gap-1">
-              {['NIP-01', 'NIP-02', 'NIP-09', 'NIP-11', 'NIP-12', 'NIP-15', 'NIP-16', 'NIP-20'].map((nip) => (
+              {['NIP-01', 'NIP-02', 'NIP-09', 'NIP-11', 'NIP-12', 'NIP-15', 'NIP-16', 'NIP-20', 'NIP-23'].map((nip) => (
                 <span key={nip} className="badge-green">{nip}</span>
               ))}
             </div>

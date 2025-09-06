@@ -1,24 +1,31 @@
-import { Key, UserCircle, Shield, QrCode, Fingerprint, Lock } from 'lucide-react'
+import { Key, UserCircle, Shield, QrCode, Fingerprint, Lock, LogOut, Copy, Eye, EyeOff } from 'lucide-react'
+import { useState } from 'react'
+import { useAuth } from '../contexts/AuthContext'
+import { LoginComponent } from '../components/LoginComponent'
 
 export function IdentityPage() {
-  const identities = [
-    {
-      name: "alice@pleb.one",
-      npub: "npub1alice123...",
-      verified: true,
-      created: "2024-01-15",
-      keyType: "Ed25519",
-      status: "active"
-    },
-    {
-      name: "alice-dev@pleb.one", 
-      npub: "npub1alicedev456...",
-      verified: false,
-      created: "2024-02-20",
-      keyType: "secp256k1",
-      status: "pending"
-    }
-  ]
+  const { user, isAuthenticated, logout } = useAuth()
+  const [showPrivateKey, setShowPrivateKey] = useState(false)
+
+  // If not authenticated, show login component
+  if (!isAuthenticated) {
+    return (
+      <div className="space-y-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900">Identity Management</h1>
+          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+            Connect with your Nostr identity to access the Pleb-R1 community features.
+          </p>
+        </div>
+        <LoginComponent />
+      </div>
+    )
+  }
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text)
+    alert(`${label} copied to clipboard!`)
+  }
 
   const verificationMethods = [
     {
@@ -29,45 +36,25 @@ export function IdentityPage() {
       difficulty: "Easy"
     },
     {
-      name: "GitHub Verification",
-      description: "Verify your identity with your GitHub account",
-      icon: UserCircle,
-      status: "Available", 
-      difficulty: "Easy"
-    },
-    {
-      name: "Hardware Key",
-      description: "Use a hardware security key for verification",
-      icon: Key,
-      status: "Coming Soon",
-      difficulty: "Advanced"
-    },
-    {
-      name: "Lightning Verification",
+      name: "Lightning Verification", 
       description: "Verify ownership through Lightning Network transactions",
       icon: QrCode,
-      status: "Beta",
+      status: "Coming Soon",
       difficulty: "Medium"
     }
   ]
 
   const securityFeatures = [
     {
-      title: "Key Rotation",
-      description: "Regularly rotate your keys for enhanced security",
+      title: "Key Security",
+      description: "Your keys are stored securely in your browser",
       icon: Fingerprint,
       enabled: true
     },
     {
-      title: "Multi-Signature",
-      description: "Require multiple signatures for important actions",
+      title: "Connection Method",
+      description: user?.privkey ? "Generated Account" : "Extension/npub",
       icon: Lock,
-      enabled: false
-    },
-    {
-      title: "Recovery Keys",
-      description: "Secure backup keys for account recovery",
-      icon: Shield,
       enabled: true
     }
   ]
@@ -78,54 +65,139 @@ export function IdentityPage() {
       <div className="text-center">
         <h1 className="text-4xl font-bold text-gray-900">Identity Management</h1>
         <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-          Secure, verifiable identity on the Nostr protocol. Take control of your 
-          digital presence with cryptographic proof and community verification.
+          Manage your Nostr identity and verification methods on the Pleb-R1 network.
         </p>
       </div>
 
-      {/* Current Identities */}
+      {/* Current Identity */}
       <div>
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Your Identities</h2>
-          <button className="btn-primary">Create New Identity</button>
+          <h2 className="text-2xl font-bold text-gray-900">Your Identity</h2>
+          <button 
+            onClick={logout}
+            className="btn-secondary flex items-center space-x-2"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Logout</span>
+          </button>
         </div>
-        <div className="space-y-4">
-          {identities.map((identity, index) => (
-            <div key={index} className="card">
-              <div className="flex justify-between items-start">
+        
+        <div className="card">
+          <div className="flex justify-between items-start">
+            <div className="flex-1">
+              <div className="flex items-center mb-6">
+                {user?.profile?.picture ? (
+                  <img 
+                    src={user.profile.picture} 
+                    alt="Profile" 
+                    className="h-16 w-16 rounded-full mr-4 object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none'
+                    }}
+                  />
+                ) : (
+                  <UserCircle className="h-16 w-16 text-pleb-600 mr-4" />
+                )}
                 <div className="flex-1">
-                  <div className="flex items-center mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900 mr-3">
-                      {identity.name}
-                    </h3>
-                    {identity.verified && (
-                      <span className="badge-green">Verified</span>
-                    )}
-                    {!identity.verified && (
-                      <span className="badge-yellow">Pending</span>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2">
-                    <span className="font-mono">{identity.npub}</span>
-                  </p>
-                  <div className="flex space-x-4 text-sm text-gray-500">
-                    <span>Created: {identity.created}</span>
-                    <span>Key: {identity.keyType}</span>
-                    <span>Status: {identity.status}</span>
-                  </div>
-                </div>
-                <div className="flex space-x-2">
-                  <button className="btn-secondary">Manage</button>
-                  <button className="text-gray-400 hover:text-gray-600">
-                    <Key className="h-4 w-4" />
-                  </button>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                    {user?.profile?.name || 'Anonymous'}
+                  </h3>
+                  {user?.profile?.nip05 && (
+                    <div className="flex items-center mb-2">
+                      <Shield className="h-4 w-4 text-green-600 mr-1" />
+                      <span className="text-sm text-green-600">{user.profile.nip05}</span>
+                    </div>
+                  )}
+                  <span className="badge-green">Connected</span>
                 </div>
               </div>
+
+              {/* Profile Information */}
+              {(user?.profile?.about || user?.profile?.website || user?.profile?.lud16 || user?.profile?.lud06) && (
+                <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                  <h4 className="text-sm font-medium text-gray-700 mb-3">Profile Information</h4>
+                  <div className="space-y-2">
+                    {user?.profile?.about && (
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wider">About</span>
+                        <p className="text-sm text-gray-700 mt-1">{user.profile.about}</p>
+                      </div>
+                    )}
+                    {user?.profile?.website && (
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wider">Website</span>
+                        <p className="text-sm text-gray-700 mt-1">
+                          <a href={user.profile.website} target="_blank" rel="noopener noreferrer" className="text-pleb-600 hover:underline">
+                            {user.profile.website}
+                          </a>
+                        </p>
+                      </div>
+                    )}
+                    {(user?.profile?.lud16 || user?.profile?.lud06) && (
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wider">Lightning Address</span>
+                        <p className="text-sm text-gray-700 mt-1">{user.profile.lud16 || user.profile.lud06}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+              
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Public Key (npub)
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <code className="flex-1 text-sm bg-gray-100 p-2 rounded font-mono break-all">
+                      {user?.npub}
+                    </code>
+                    <button
+                      onClick={() => copyToClipboard(user?.npub || '', 'Public key')}
+                      className="btn-secondary p-2"
+                      title="Copy npub"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {user?.privkey && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Private Key (nsec) - Keep Safe!
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <code className="flex-1 text-sm bg-red-50 p-2 rounded font-mono break-all border border-red-200">
+                        {showPrivateKey ? user.privkey : '•'.repeat(64)}
+                      </code>
+                      <button
+                        onClick={() => setShowPrivateKey(!showPrivateKey)}
+                        className="btn-secondary p-2"
+                        title={showPrivateKey ? "Hide private key" : "Show private key"}
+                      >
+                        {showPrivateKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                      {showPrivateKey && (
+                        <button
+                          onClick={() => copyToClipboard(user.privkey || '', 'Private key')}
+                          className="btn-secondary p-2"
+                          title="Copy nsec"
+                        >
+                          <Copy className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-red-600 mt-1">
+                      ⚠️ Never share your private key. Store it safely!
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
-
       {/* Verification Methods */}
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Verification Methods</h2>
@@ -141,7 +213,6 @@ export function IdentityPage() {
                     <div className="flex items-center space-x-2">
                       <span className={`text-xs px-2 py-1 rounded-full ${
                         method.status === 'Available' ? 'bg-green-100 text-green-800' :
-                        method.status === 'Beta' ? 'bg-yellow-100 text-yellow-800' :
                         'bg-gray-100 text-gray-800'
                       }`}>
                         {method.status}
@@ -154,13 +225,11 @@ export function IdentityPage() {
                 <button 
                   className={`w-full ${
                     method.status === 'Available' ? 'btn-primary' : 
-                    method.status === 'Beta' ? 'btn-secondary' : 
                     'btn-secondary opacity-50 cursor-not-allowed'
                   }`}
-                  disabled={method.status === 'Coming Soon'}
+                  disabled={method.status !== 'Available'}
                 >
-                  {method.status === 'Available' ? 'Setup Verification' :
-                   method.status === 'Beta' ? 'Try Beta' : 'Coming Soon'}
+                  {method.status === 'Available' ? 'Setup Verification' : 'Coming Soon'}
                 </button>
               </div>
             )
@@ -170,8 +239,8 @@ export function IdentityPage() {
 
       {/* Security Features */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Security Features</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Security Status</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {securityFeatures.map((feature, index) => {
             const Icon = feature.icon
             return (
@@ -181,8 +250,8 @@ export function IdentityPage() {
                     <Icon className="h-6 w-6 text-pleb-600 mr-3" />
                     <h3 className="text-lg font-semibold text-gray-900">{feature.title}</h3>
                   </div>
-                  <div className={`w-12 h-6 ${feature.enabled ? 'bg-pleb-600' : 'bg-gray-300'} 
-                    rounded-full relative cursor-pointer`}>
+                  <div className={`w-12 h-6 ${feature.enabled ? 'bg-green-500' : 'bg-gray-300'} 
+                    rounded-full relative`}>
                     <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform 
                       ${feature.enabled ? 'transform translate-x-6' : 'translate-x-0.5'}`}></div>
                   </div>
@@ -245,10 +314,10 @@ export function IdentityPage() {
             <h3 className="text-lg font-semibold text-yellow-800 mb-2">Security Best Practices</h3>
             <ul className="space-y-2 text-sm text-yellow-700">
               <li>• Keep your private keys secure and never share them</li>
-              <li>• Use hardware security keys for high-value identities</li>
-              <li>• Regularly rotate your keys and update verification methods</li>
-              <li>• Enable multiple verification methods for redundancy</li>
-              <li>• Backup your recovery keys in a secure location</li>
+              <li>• Use browser extensions for enhanced security</li>
+              <li>• Backup your keys in a secure location</li>
+              <li>• Enable verification methods when available</li>
+              <li>• Use separate keys for different purposes</li>
             </ul>
           </div>
         </div>

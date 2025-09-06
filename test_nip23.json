@@ -1,0 +1,14 @@
+{
+  "id": "test123",
+  "pubkey": "test-pubkey-here",
+  "created_at": 1725652800,
+  "kind": 30023,
+  "tags": [
+    ["d", "my-first-article"],
+    ["title", "My First Long-form Article"],
+    ["summary", "This is a test article for NIP-23 support"],
+    ["published_at", "1725652800"]
+  ],
+  "content": "# My First Article\n\nThis is a test long-form content article to demonstrate NIP-23 support in our Nostr relay.\n\n## Introduction\n\nLong-form content allows for rich, detailed posts that go beyond the typical short note format.\n\n## Conclusion\n\nThis article demonstrates that our relay can handle long-form content properly.",
+  "sig": "test-signature"
+}

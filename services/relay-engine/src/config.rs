@@ -48,7 +48,7 @@ mod tests {
 
         assert_eq!(config.database_url, "postgresql://postgres:password@localhost:5432/pleb_r1");
         assert_eq!(config.port, 8080);
-        assert_eq!(config.relay_name, "Pleb.One Relay");
+        assert_eq!(config.relay_name, "Pleb-R1 Relay");
         assert_eq!(config.relay_description, "A community-owned Nostr relay");
         assert_eq!(config.relay_pubkey, None);
         assert_eq!(config.relay_contact, None);

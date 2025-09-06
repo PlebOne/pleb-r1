@@ -1,16 +1,16 @@
 use nostr::{Event, Filter, JsonUtil};
-use sqlx::{SqlitePool, Row};
+use sqlx::{PgPool, Row};
 use anyhow::Result;
 use tracing::{debug, error};
 
 #[derive(Clone)]
 pub struct PostgresDatabase {
-    pool: SqlitePool,
+    pool: PgPool,
 }
 
 impl PostgresDatabase {
     pub async fn new(database_url: &str) -> Result<Self> {
-        let pool = SqlitePool::connect(database_url).await?;
+        let pool = PgPool::connect(database_url).await?;
         Ok(Self { pool })
     }
 
@@ -19,13 +19,13 @@ impl PostgresDatabase {
         sqlx::query(
             r#"
             CREATE TABLE IF NOT EXISTS events (
-                id TEXT PRIMARY KEY,
-                pubkey TEXT NOT NULL,
-                created_at INTEGER NOT NULL,
+                id VARCHAR(64) PRIMARY KEY,
+                pubkey VARCHAR(64) NOT NULL,
+                created_at BIGINT NOT NULL,
                 kind INTEGER NOT NULL,
                 tags TEXT NOT NULL,
                 content TEXT NOT NULL,
-                sig TEXT NOT NULL,
+                sig VARCHAR(128) NOT NULL,
                 raw_event TEXT NOT NULL
             );
             "#,
@@ -54,7 +54,7 @@ impl PostgresDatabase {
         debug!("Saving event {}", event.id);
 
         let tags_json = serde_json::to_string(&event.tags)?;
-        let raw_event = serde_json::to_string(&event.as_json())?;
+        let raw_event = event.as_json().to_string();
 
         sqlx::query(
             r#"
@@ -112,14 +112,9 @@ impl PostgresDatabase {
         let mut events = Vec::new();
         for row in rows {
             let raw_event_str: String = row.get("raw_event");
-            match serde_json::from_str::<serde_json::Value>(&raw_event_str) {
-                Ok(raw_event) => {
-                    match serde_json::from_value::<Event>(raw_event) {
-                        Ok(event) => events.push(event),
-                        Err(e) => error!("Failed to deserialize event: {}", e),
-                    }
-                },
-                Err(e) => error!("Failed to parse JSON from database: {}", e),
+            match serde_json::from_str::<Event>(&raw_event_str) {
+                Ok(event) => events.push(event),
+                Err(e) => error!("Failed to deserialize event: {}", e),
             }
         }
 

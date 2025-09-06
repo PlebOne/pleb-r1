@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Activity, Book, Users, User, Home, Github, Zap } from 'lucide-react'
+import { Activity, Book, Users, User, Home, Github, Zap, Rss } from 'lucide-react'
 
 interface LayoutProps {
   children: ReactNode
@@ -12,6 +12,7 @@ export function Layout({ children }: LayoutProps) {
   const navigation = [
     { name: 'Home', href: '/', icon: Home },
     { name: 'Dashboard', href: '/dashboard', icon: Activity },
+    { name: 'Feed', href: '/feed', icon: Rss },
     { name: 'Education', href: '/education', icon: Book },
     { name: 'Community', href: '/community', icon: Users },
     { name: 'Identity', href: '/identity', icon: User },

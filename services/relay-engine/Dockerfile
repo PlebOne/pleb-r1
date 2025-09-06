@@ -1,5 +1,5 @@
 # Multi-stage build for production-ready Rust binaries
-FROM rust:1.75 as builder
+FROM rust:1.89 as builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -18,9 +18,11 @@ COPY services/relay-engine/Cargo.toml ./services/relay-engine/
 
 # Create dummy source files to cache dependencies
 RUN mkdir -p services/relay-engine/src \
+    && mkdir -p services/relay-engine/benches \
     && echo "fn main() {}" > services/relay-engine/src/main.rs \
     && echo "fn main() {}" > services/relay-engine/src/dev_main.rs \
-    && echo "" > services/relay-engine/src/lib.rs
+    && echo "" > services/relay-engine/src/lib.rs \
+    && echo "fn main() {}" > services/relay-engine/benches/relay_benchmarks.rs
 
 # Build dependencies (this layer will be cached)
 WORKDIR /usr/src/app/services/relay-engine
@@ -53,8 +55,8 @@ RUN groupadd -r appuser && useradd -r -g appuser -m -d /app appuser
 WORKDIR /app
 
 # Copy binaries from builder stage
-COPY --from=builder /usr/src/app/services/relay-engine/target/release/relay-engine /app/
-COPY --from=builder /usr/src/app/services/relay-engine/target/release/dev-server /app/
+COPY --from=builder /usr/src/app/target/release/relay-engine /app/
+COPY --from=builder /usr/src/app/target/release/dev-server /app/
 
 # Create data directory for SQLite and logs
 RUN mkdir -p /app/data /app/logs && chown -R appuser:appuser /app

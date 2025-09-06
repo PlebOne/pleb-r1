@@ -14,10 +14,14 @@ export function HomePage() {
         </h1>
         <p className="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
           Community-owned Nostr infrastructure that empowers the grassroots. 
-          Open source, transparent, and built for sovereignty.
+          Open source, transparent, and built for sovereignty. Watch the live feed 
+          of posts flowing through the relay in real-time.
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
-          <Link to="/dashboard" className="btn-primary">
+          <Link to="/feed" className="btn-primary">
+            View Live Feed
+          </Link>
+          <Link to="/dashboard" className="btn-secondary">
             View Dashboard
           </Link>
           <Link to="/education" className="flex items-center text-sm font-semibold leading-6 text-gray-900">
